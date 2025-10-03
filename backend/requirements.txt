@@ -1,0 +1,41 @@
+# Django core
+Django==5.2.6
+
+# REST API
+djangorestframework==3.16.1
+djangorestframework-simplejwt==5.5.1
+
+# PostgreSQL
+psycopg2-binary==2.9.10
+
+# CORS
+django-cors-headers==4.9.0
+
+# Environment variables
+django-decouple==2.1
+
+#documentation
+drf-yasg==1.21.11
+
+# Admin UI and customization
+django-admin-interface==0.30.1
+django-jazzmin==3.0.1
+django-import-export==4.3.10
+django-ckeditor==6.7.3
+django-extensions==4.1
+django-debug-toolbar==6.0.0
+
+# Polymorphic models (для наследования моделей товаров)
+django-polymorphic==4.1.0
+
+# SEO
+python-decouple==3.8
+
+# Многоязычность
+django-parler==2.3
+django-parler-rest==2.2
+
+# Тестирование
+pytest==8.4.2
+pytest-django==4.11.1
+pytest-cov==7.0.0

@@ -1,0 +1,77 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+venv/
+env/
+ENV/
+*.env
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+*.sqlite3
+
+# Media files
+media/
+uploads/
+products/
+
+# Static files (if collected)
+staticfiles/
+static/
+
+# VSCode
+.vscode/
+
+# MacOS
+.DS_Store
+
+# JetBrains IDEs
+.idea/
+
+# Python Packaging
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# Jet Django
+jet_settings.json
+
+# Django Admin UI / Grappelli
+*.db
