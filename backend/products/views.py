@@ -1,44 +1,76 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .models import Category, Product, Variation, Promotion
-from .serializers import CategorySerializer, ProductSerializer, VariationSerializer, PromotionSerializer
+
+from .models import Category, Product, Promotion, Brand
+from .serializers import CategorySerializer, ProductSerializer, PromotionSerializer, BrandSerializer
+from .permissions import IsWarehouseUser
 
 
-class CategoryViewSet(ModelViewSet):
-	queryset = Category.objects.all()
-	serializer_class = CategorySerializer
+class CategoryViewSet(ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [AllowAny]  # GET разрешен всем
 
-	def get_permissions(self):
-		if self.action in ["list", "retrieve"]:  # GET запросы
-			return [AllowAny()]
-		return [IsAuthenticated()]  # POST, PUT, DELETE
 
 class ProductViewSet(ModelViewSet):
-	queryset = Product.objects.all()
-	serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
-	def get_permissions(self):
-		if self.action in ["list", "retrieve"]:  # GET запросы
-			return [AllowAny()]
-		return [IsAuthenticated()]  # POST, PUT, DELETE
-
-
-class VariationViewSet(ModelViewSet):
-	queryset = Variation.objects.all()
-	serializer_class = VariationSerializer
-
-	def get_permissions(self):
-		if self.action in ["list", "retrieve"]:  # GET запросы
-			return [AllowAny()]
-		return [IsAuthenticated()]  # POST, PUT, DELETE
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:  # только просмотр
+            return [AllowAny()]
+        return [IsWarehouseUser()]  # изменения — только складу
 
 
-class PromotionViewSet(ModelViewSet):
+class PromotionViewSet(ReadOnlyModelViewSet):
     queryset = Promotion.objects.all()
     serializer_class = PromotionSerializer
-    
-    def get_permissions(self):
-        if self.action in ["list", "retrieve"]:  # GET запросы
-            return [AllowAny()]
-        return [IsAuthenticated()]  # POST, PUT, DELETE
+    permission_classes = [AllowAny]
+
+
+class BrandViewSet(ReadOnlyModelViewSet):
+	queryset = Brand.objects.all()
+	serializer_class = BrandSerializer
+	permission_classes = [AllowAny]
+
+
+class ProductImportView(APIView):
+    permission_classes = [IsAuthenticated, IsWarehouseUser]
+
+    def post(self, request):
+        data = request.data
+        barcode = data.get("barcode")
+        name = data.get("name")
+        count = data.get("count")
+
+        if not barcode or not name or count is None:
+            return Response(
+                {"error": "Поля barcode, name и count обязательны"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            product = Product.objects.get(barcode=barcode)
+            # обновляем существующий товар
+            product.count = count
+            product.set_current_language("ru")
+            if product.safe_translation_getter("name") != name:
+                product.name = name
+            product.save()
+            created = False
+        except Product.DoesNotExist:
+            # создаём новый товар
+            product = Product.objects.create(barcode=barcode, count=count)
+            product.set_current_language("ru")
+            product.name = name
+            product.save()
+            created = True
+
+        return Response(
+            {"success": True, "created": created, "product_id": product.id},
+            status=status.HTTP_200_OK
+        )

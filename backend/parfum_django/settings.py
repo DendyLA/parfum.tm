@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from decouple import config
 
+from .swagger_settings import SWAGGER_SETTINGS
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -135,6 +137,7 @@ REST_FRAMEWORK = {
     ),
 }
 
+
 #debug
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -158,6 +161,34 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+
+#swagger settings
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'My API',
+    'DESCRIPTION': 'API for shop project',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
+
+    # 👇 Добавляем поддержку JWT
+    'AUTHENTICATION_WHITELIST': [],
+    'SECURITY': [
+        {'BearerAuth': []},
+    ],
+    'COMPONENTS': {
+        'securitySchemes': {
+            'BearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            }
+        }
+    },
+}
 
 
 # Internationalization

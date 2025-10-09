@@ -1,12 +1,15 @@
 from django.contrib import admin
 from parler.admin import TranslatableAdmin
-from .models import Category, Product, Variation, Promotion, Brand
+from django.utils.html import format_html, mark_safe
+
+from .models import Category, Product, Promotion, Brand
 
 
 @admin.register(Category)
 class CategoryAdmin(TranslatableAdmin):
     # Показываем поля в списке
     list_display = ( "name", "parent", "get_full_path")
+    list_display_links = ("name", "parent",)
     list_filter = ("parent",)
     search_fields = ("translations__name",)
 
@@ -26,12 +29,22 @@ class CategoryAdmin(TranslatableAdmin):
 
 @admin.register(Product)
 class ProductAdmin(TranslatableAdmin):
-    list_display = ("name", "barcode", "price", "discount_price")
+    list_display = ("name", "barcode", "price", "variations", "discount_price", 'image_preview')
+    list_display_links = ("name", "barcode",)
+    list_filter = ("category",)
+    search_fields = ("translations__name", "barcode",)
+    readonly_fields = ("barcode", "created_at", "updated_at")
+    list_editable = ("price", "discount_price", )
 
 
-@admin.register(Variation)
-class VariationAdmin(admin.ModelAdmin):
-    list_display = ("product", "type", "value", "stock")
+    fields = ("barcode", "name",  "price", "variations", "discount_price", "brand", "category", "image", "count", "description", 'created_at', 'updated_at', )
+
+    def image_preview(self, obj):
+        if obj.image:
+            return mark_safe(f'<img src="{obj.image.url}" width="80" height="80" style="object-fit: cover;" />')
+        return "Нет изображения"
+
+    image_preview.short_description = "Превью"
 
 
 @admin.register(Promotion)

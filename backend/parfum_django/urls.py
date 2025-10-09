@@ -17,7 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from django.conf.urls.static import static
 from django.views.generic import RedirectView
+
 
 from rest_framework import permissions
 from rest_framework_simplejwt.views import (
@@ -39,12 +41,16 @@ schema_view = get_schema_view(
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    authentication_classes=[],
 )
 
+swagger_schema_view = schema_view.with_ui('swagger', cache_timeout=0)
+
+
+
+
 serviceurl = [
-    
 	path('admin/', admin.site.urls),
-    
 ]
 
 documentationurl = [
@@ -56,15 +62,16 @@ documentationurl = [
 ]
 
 jwttokens = [
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 apiurl = [
 	 # --- API versioning ---
-    path('api/v1/products/', include('products.urls')),  # version 1
+    path('api/v1/', include('products.urls')),  # version 1
     # path('api/v2/', include('your_app.api.v2.urls')),  # version 2 (когда понадобится)
 ]
+
 
 urlpatterns = serviceurl + documentationurl + jwttokens + apiurl
 
@@ -75,3 +82,7 @@ if settings.DEBUG:
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
