@@ -29,7 +29,7 @@ class CategoryAdmin(TranslatableAdmin):
 
 @admin.register(Product)
 class ProductAdmin(TranslatableAdmin):
-    list_display = ("name", "barcode", "price", "variations", "discount_price", 'image_preview')
+    list_display = ("name", "barcode", "price", "variations", "discount_price", 'image_preview', "count")
     list_display_links = ("name", "barcode",)
     list_filter = ("category",)
     search_fields = ("translations__name", "barcode",)
