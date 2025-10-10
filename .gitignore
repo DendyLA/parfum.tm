@@ -24,7 +24,6 @@ db.sqlite3
 # Media files
 media/
 uploads/
-products/
 
 # Static files (if collected)
 staticfiles/

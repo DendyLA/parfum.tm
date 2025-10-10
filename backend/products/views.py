@@ -46,25 +46,42 @@ class ProductImportView(APIView):
         barcode = data.get("barcode")
         name = data.get("name")
         count = data.get("count")
+        price = data.get("price")  # получаем цену со склада
 
-        if not barcode or not name or count is None:
+        if not barcode or not name or count is None or price is None:
             return Response(
-                {"error": "Поля barcode, name и count обязательны"},
+                {"error": "Поля barcode, name, count и price обязательны"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         try:
             product = Product.objects.get(barcode=barcode)
             # обновляем существующий товар
-            product.count = count
+            updated = False
             product.set_current_language("ru")
+
             if product.safe_translation_getter("name") != name:
                 product.name = name
-            product.save()
+                updated = True
+
+            if product.count != count:
+                product.count = count
+                updated = True
+
+            if product.price != price:
+                product.price = price
+                updated = True
+
+            if updated:
+                product.save()
             created = False
         except Product.DoesNotExist:
             # создаём новый товар
-            product = Product.objects.create(barcode=barcode, count=count)
+            product = Product.objects.create(
+                barcode=barcode,
+                count=count,
+                price=price,
+            )
             product.set_current_language("ru")
             product.name = name
             product.save()
