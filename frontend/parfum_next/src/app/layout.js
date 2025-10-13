@@ -1,9 +1,11 @@
 import "../styles/globals.scss";
 
-export const metadata = {
+export const metadata = { // its for main page
 	title: "ParfumTM - Интернет-магазин косметики и парфюмерии №1",
 	description: "ParfumTM ☜❶☞ Интернет-магазин парфюмерии и косметики ✿ Бесплатная доставка ✿ 100% оригинальные продукты ✿ Лучший выбор и низкие цены!",
 	keywords: "парфюмерия, духи, брендовые ароматы, новинки, скидки, купить духи, косметика, уход за кожей, макияж, мужская парфюмерия, женская парфюмерия, унисекс ароматы, оригинальная косметика, парфюмерный магазин, интернет-магазин парфюмерии, парфюмерия онлайн, косметика онлайн, лучшие бренды, люксовая косметика, уход за волосами, аксессуары для красоты",
+	canonical: "https://parfum.com.tm/",
+  	robots: "index, follow",
 	openGraph: {
 		title: "ParfumTM - Интернет магазин косметики и парфюмерии №1",
 		description: "ParfumTM ☜❶☞ Интернет-магазин парфюмерии и косметики ✿ Бесплатная доставка ✿ 100% оригинальные продукты ✿ Лучший выбор и низкие цены!",
@@ -27,8 +29,6 @@ export default function RootLayout({ children }) {
 		<html lang="ru">
 		<head>
 			<link rel="icon" href="/favicon.ico" />
-			{/* <link rel="canonical" href="https://parfum.com.tm" /> */}
-			<meta name="robots" content="index, follow" />
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
 		</head>
 		<body>
