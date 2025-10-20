@@ -1,0 +1,46 @@
+@import '../../styles/variables';
+
+.header{
+
+	&__top{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 44px;
+
+		& .features{
+			font: $small-text;
+		}
+
+		& .actions{
+			flex: 1 0 auto;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			&__list{
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 3rem;
+			}
+		}
+
+		& .lang{
+			
+			&__list{
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 1rem;
+			}
+
+			&__item{
+				&.active{
+					color: $color-secondary;
+				}
+			}
+		}
+	}
+	
+}

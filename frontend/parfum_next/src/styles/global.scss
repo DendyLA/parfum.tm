@@ -5,10 +5,23 @@
 @import './variables';
 @import './mixins';
 
+body{
+	color: $color-primary;
+	font: $small-text;
+}
 
 html{
 	font-size: 10px;
 }
 
+.link{
+	cursor: pointer;
 
+	&:hover{
+		color: #5b24c9;
+	}
+	&-extra{
+		color: rgb(234, 64, 64);
+	}
+}
 
