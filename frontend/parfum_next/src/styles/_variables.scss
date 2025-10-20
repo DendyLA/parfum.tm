@@ -1,0 +1,44 @@
+// =========================
+// 🎨 COLORS
+// =========================
+$color-primary: #212121;      // основной акцентный цвет 
+$color-secondary: #727178;   // для текста
+$color-accent: #5b24c9;
+
+// =========================
+// 🎨 FONT WEIGHTS
+// =========================
+$fw-light: 300;
+$fw-regular: 400;
+$fw-medium: 500;
+$fw-semibold: 550;
+$fw-bold: 700;
+
+// =========================
+// 🎨 FONT FAMILY
+// =========================
+$main-ff: 'Fixel', sans-serif;
+
+// =========================
+// 🎨 TYPOGRAPHY STYLES
+// =========================
+$title-h1: #{$fw-bold} 5rem/120% #{$main-ff};
+$title-h2: #{$fw-bold} 4rem/120% #{$main-ff};
+$title-h3: #{$fw-semibold} 3.5rem/125% #{$main-ff};
+$title-h4: #{$fw-semibold} 2.5rem/130% #{$main-ff};
+$brand-name: #{$fw-semibold} 1rem/130% #{$main-ff}; // 16px
+$product-name: #{$fw-medium} 1.125rem/140% #{$main-ff}; // 18px
+$product-desc: #{$fw-regular} 0.875rem/150% #{$main-ff}; // 14px
+$price: #{$fw-semibold} 1.125rem/120% #{$main-ff}; // 18px
+$price-old: #{$fw-regular} 0.875rem/120% #{$main-ff}; // 14px
+$small-text: #{$fw-regular} 0.75rem/140% #{$main-ff}; // 12px
+
+
+// =========================
+// 📱 BREAKPOINTS (ADAPTIVE)
+// =========================
+$bp-mobile: 480px;
+$bp-tablet: 768px;
+$bp-laptop: 1024px;
+$bp-desktop: 1280px;
+$bp-wide: 1440px;

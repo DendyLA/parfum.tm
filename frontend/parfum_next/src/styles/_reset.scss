@@ -1,0 +1,100 @@
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default padding */
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+/* Remove default margin */
+body,
+h1, h2, h3, h4,
+p,
+ul, ol, li,
+figure, figcaption,
+blockquote,
+dl, dd {
+  margin: 0;
+}
+
+/* Set core body defaults */
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+/* Remove list styles on ul, ol elements with a class attribute */
+ul[class],
+ol[class] {
+  list-style: none;
+}
+
+/* A elements that don't have a class get default styles */
+a {
+  text-decoration: none;
+  color: inherit;
+  background-color: transparent;
+}
+
+/* Make images easier to work with */
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+/* Remove built-in form typography styles */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font: inherit;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+/* Remove blue highlight on mobile */
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  outline: none;
+}
+
+/* Editable content fix */
+[contenteditable] {
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Smooth buttons */
+button {
+  cursor: pointer;
+  background: none;
+}
+
+/* Prevent text selection on buttons */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}

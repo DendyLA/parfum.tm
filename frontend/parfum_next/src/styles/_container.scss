@@ -1,0 +1,12 @@
+.container{
+	width: calc(100% - 96px); // отступы по бокам
+	max-width: 1600px;        // максимальная ширина
+	margin: 0 auto;           // центрирование
+	position: relative;       // чтобы внутренние absolute работали
+	display: block;           // базовое отображение
+
+	// Мобильные и планшетные экраны
+	@media (min-width: 1440px) {
+		width: calc(100% - 192px);
+	}
+}
