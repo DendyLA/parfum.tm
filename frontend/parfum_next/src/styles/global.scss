@@ -16,12 +16,33 @@ html{
 
 .link{
 	cursor: pointer;
-
+	transition: all .3s;
 	&:hover{
 		color: #5b24c9;
 	}
 	&-extra{
 		color: rgb(234, 64, 64);
 	}
+
+	&-icon{
+		transition: all .3s;
+		cursor: pointer;
+		display: inline-block;
+		&:hover{
+			opacity: .5;
+		}
+	}
 }
+
+
+.search{
+	&__form{
+		display: none;
+
+		&.active{
+			display: flex;
+		}
+	}
+}
+
 
