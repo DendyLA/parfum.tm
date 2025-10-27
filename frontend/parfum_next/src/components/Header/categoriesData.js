@@ -38,7 +38,7 @@ export const categories = [
   },
   {
     name: "Для тела",
-    slug: "makeup",
+    slug: "forbody",
     children: [
       { name: "Для глаз", slug: "makeup/eyes" },
       {
@@ -51,7 +51,7 @@ export const categories = [
   },
   {
     name: "Для глаз",
-    slug: "makeup",
+    slug: "foreyes",
     children: [
       { name: "Для глаз", slug: "makeup/eyes" },
       {
