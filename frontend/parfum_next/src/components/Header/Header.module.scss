@@ -55,29 +55,6 @@
 		align-items: center;
 	}
 
-	&__bottom{
-		margin-top: 4rem;
-		display: flex;
-		align-items: center;
-	}
-
-	&__nav{
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 2rem;
-		position: relative;
-		height: 4rem;
-		margin: 0 auto;
-		.nav__item{
-			font: $fw-bold 1.5rem/120% $main-ff;
-		}
-	}
-	
-	&__burger{
-		cursor: pointer;
-	}
 }
 
 

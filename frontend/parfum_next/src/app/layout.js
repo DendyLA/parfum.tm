@@ -1,5 +1,7 @@
 import "@/styles/global.scss";
 import Header from "@/components/Header/Header"; 
+import Footer from '@/components/Footer/Footer'
+
 
 export const metadata = {
   icons: {
@@ -17,6 +19,8 @@ export default function RootLayout({ children }) {
         <Header />
         
         <main>{children}</main>
+		
+		<Footer />
       </body>
     </html>
   );

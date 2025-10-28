@@ -46,3 +46,18 @@ html{
 }
 
 
+.input{
+	font-size: $small-text;
+	border-bottom: 1px solid #212121;
+	padding: 10px 110px 10px 0;
+	width: 416px;
+	&::placeholder {
+		color: #fafafa;
+		opacity: 1;
+	}
+	&:focus ~ label, &:not(:placeholder-shown) ~ label{
+		top: -12px;
+		font-size: 12px;
+		color: #b4b4b4;
+	}
+}

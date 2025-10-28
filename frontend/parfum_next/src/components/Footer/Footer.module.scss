@@ -1,0 +1,73 @@
+@import '../../styles/variables';
+
+
+.footer{
+	padding: 4rem 0;
+
+	&__subscribe{
+		margin-top: 2rem;
+		padding: 78px 16px 41px;
+		background-color: #fafafa;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	&__title{
+		font: $title-h4;
+	}
+
+	&__wrapper{
+		position: relative;
+	}
+
+	&__input{
+		position: relative;
+
+		& label{
+			color: #a6a2a2;
+			font: $small-text;
+			position: absolute;
+			pointer-events: none;
+			left: 0;
+			top: 6px;
+			transition: .3s ease all;
+		}
+		& .error{
+			font-size: 1.2rem;
+			color: red;
+			min-height: 1.5em; // важный хак
+
+		}
+	}
+	&__submit{
+		text-transform: uppercase;
+		font-size: 12px;
+		font-weight: 500;
+		color: #212121;
+		height: 33px;
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+	.social{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 4rem;
+		margin-top: 3rem;
+		&__item{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			svg{
+				transition: all .3s;
+			}
+			&:hover svg{
+				stroke: #656464;
+			}
+		}
+	}
+}

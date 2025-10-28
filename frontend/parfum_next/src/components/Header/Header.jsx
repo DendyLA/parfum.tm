@@ -2,9 +2,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { categories } from "./categoriesData";
 
-import { Search, ShoppingBasket, Menu } from "lucide-react";
+import { Search, ShoppingBasket } from "lucide-react";
+
+import CategoryMenu from "../CategoryMenu/CategoryMenu";
 
 import styles from './Header.module.scss';
 
@@ -56,16 +57,7 @@ export default function Header() {
 					</div>
 				</div>
 
-				<nav className={`${styles.header__bottom}`}>
-					<div className={styles.header__burger}>
-						<Menu size={32} strokeWidth={1} absoluteStrokeWidth/>
-					</div>
-					<ul className={`${styles.header__nav} nav`}>
-						{categories.map((cat) => (
-						<li className={`${styles.nav__item} link`} key={cat.slug}><Link href=''>{cat.name}</Link></li>
-						))}
-					</ul>
-				</nav>
+				<CategoryMenu/>
 			</div>
 			
 		</header>
