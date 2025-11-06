@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.5",
     "axios": "^1.12.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.22",
@@ -28,6 +31,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "eslint": "^9",
-    "eslint-config-next": "15.5.4"
+    "eslint-config-next": "15.5.4",
+    "swiper": "^12.0.3"
   }
 }
