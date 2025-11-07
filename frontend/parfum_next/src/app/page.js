@@ -3,6 +3,8 @@ import styles from "./page.module.scss";
 
 import Banners from "@/components/Banners/Banners";
 import ProductList from "@/components/ProductList/ProductList";
+import CompanyList from "@/components/CompanyList/CompanyList";
+
 
 export default function Home() {
 
@@ -24,24 +26,40 @@ export default function Home() {
 
 	]
 
+	const company = [
+		{title : 'Cerave', image : '/images/brands/cerave.png'},
+		{title : 'Cerave', image : '/images/brands/cerave.png'},
+		{title : 'Cerave', image : '/images/brands/cerave.png'},
+		{title : 'Cerave', image : '/images/brands/cerave.png'},
+		{title : 'Cerave', image : '/images/brands/cerave.png'},
+		{title : 'Cerave', image : '/images/brands/cerave.png'},
+		{title : 'Cerave', image : '/images/brands/cerave.png'},
+		{title : 'Cerave', image : '/images/brands/cerave.png'},
+	]
+
 
   return (
     <>
-		<section className={styles.section_padd}>
+		<section className='section_padd'>
 			<div className="container">
 				<Banners/>
 			</div>
 		</section>
-		<section className={styles.section_padd}>
+		<section className='section_padd'>
 			<div className="container">
 				<h4 className='title'>Рекомендуем</h4>
 				<ProductList product={products}/>
 			</div>
 		</section>
-		<section className={styles.section_padd}>
+		<section className='section_padd'>
 			<div className="container">
 				<h4 className='title'>Новинки</h4>
 				<ProductList product={productsNew}/>
+			</div>
+		</section>
+		<section className='section_padd'>
+			<div className="container">
+				<CompanyList company={company}/>
 			</div>
 		</section>
 		

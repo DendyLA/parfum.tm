@@ -1,0 +1,37 @@
+@import '../../styles/variables';
+
+.company{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&__item{
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 14rem;
+		height: 9rem;
+		border: 1px solid #e8e8e8;
+  		border-radius: 8px;
+		filter: grayscale(1);
+		transition: filter .4s;
+		&:hover{
+			filter: grayscale(0);
+		}
+	}
+	&__btn{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 14rem;
+		height: 9rem;
+		border: 1px solid #e8e8e8;
+		border-radius: 8px;
+		color: $color-primary;
+		transition: all .4s;
+		&:hover{
+			color: $color-secondary;
+		}
+	}
+}
