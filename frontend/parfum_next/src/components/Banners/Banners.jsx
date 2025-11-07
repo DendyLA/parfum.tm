@@ -1,30 +1,35 @@
-'use client';
+'use client'
+
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Skeleton from "@mui/material/Skeleton";
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, A11y, Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, A11y, Autoplay } from "swiper/modules";
 
-import styles from './Banners.module.scss';
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+import styles from "./Banners.module.scss";
 
 export default function Banners({ slides = [] }) {
-	const items = slides.length ? slides : [
-		{ id: 1, title: "Slide 1", image: "/images/banners/promo_1.jpg" },
-		{ id: 2, title: "Slide 2", image: "/images/banners/promo_2.jpg" },
-		{ id: 3, title: "Slide 3", image: "/images/banners/promo_3.jpg" },
-	];
+  const items = slides.length
+    ? slides
+    : [
+        { id: 1, title: "Slide 1", image: "/images/banners/promo_1.jpg" },
+        { id: 2, title: "Slide 2", image: "/images/banners/promo_2.jpg" },
+        { id: 3, title: "Slide 3", image: "/images/banners/promo_3.jpg" },
+      ];
 
-	const [loadedImages, setLoadedImages] = useState({});
+  const [loadedImages, setLoadedImages] = useState({});
 
-	const handleImageLoad = (id) => {
-		setLoadedImages((prev) => ({ ...prev, [id]: true }));
-	};
+  const handleImageLoad = (id) => {
+    setLoadedImages((prev) => ({ ...prev, [id]: true }));
+  };
 
-	return (
+  return (
 		<div className={styles.banner}>
 			<Swiper
 				modules={[Navigation, Pagination, Autoplay, A11y]}
@@ -37,30 +42,44 @@ export default function Banners({ slides = [] }) {
 				className={styles.slider}
 			>
 				{items.map((it) => (
-					<SwiperSlide key={it.id || it.title} className={styles.slide}>
-						<Link href="">
-							<div className={styles.imageWrapper}>
-								{/* Скелетон */}
-								{!loadedImages[it.id] && (
-									<div className='skeleton'></div>
-								)}
+				<SwiperSlide key={it.id || it.title} className={styles.slide}>
+					<Link href="">
+						<div className={styles.imageWrapper}>
+							{/* Скелетон */}
+							{!loadedImages[it.id] && (
+							<Skeleton
+								variant="rectangular"
+								animation="wave"
+								width="100%"
+								height="100%"
+								sx={{
+								position: "absolute",
+								top: 0,
+								left: 0,
+								width: "100%",
+								height: "100%",
+								borderRadius: "12px",
+								zIndex: 2,
+								}}
+							/>
+							)}
 
-								<Image
-									src={typeof it === "string" ? it : it.image}
-									alt={it.title || "slide"}
-									fill
-									style={{
-										objectFit: "cover",
-										opacity: loadedImages[it.id] ? 1 : 0,
-										transition: "opacity 0.5s ease",
-									}}
-									sizes="100%"
-									priority
-									onLoad={() => handleImageLoad(it.id)}
-								/>
-							</div>
-						</Link>
-					</SwiperSlide>
+							<Image
+							src={typeof it === "string" ? it : it.image}
+							alt={it.title || "slide"}
+							fill
+							style={{
+								objectFit: "cover",
+								opacity: loadedImages[it.id] ? 1 : 0,
+								transition: "opacity 0.5s ease",
+							}}
+							sizes="100%"
+							priority
+							onLoad={() => handleImageLoad(it.id)}
+							/>
+						</div>
+					</Link>
+				</SwiperSlide>
 				))}
 			</Swiper>
 		</div>
