@@ -13,14 +13,12 @@ export default function CompanyList({ company = {} }) {
 	};
 
 
-	const currentCompany = Object.keys(company).length
-		? company
-		: [{title: "CeraVe", image: "/images/brands/cerave.png",}];
-  	
+	if (!company.length) return null;
+
 
   	return (
 		<ul className={styles.company}>
-			{currentCompany.map((it, idx) => (
+			{company.map((it, idx) => (
 				<Link href={''} key={idx}>
 					<li  className={styles.company__item}>
 						<div className={styles.company__imageWrapper}>
@@ -35,8 +33,8 @@ export default function CompanyList({ company = {} }) {
 								/>
 							)}
 							<Image
-								src={it.image}
-								alt={it.title}
+								src={it.logo}
+								alt={it.name || 'company logo'}
 								width={80}
 								height={80}
 								sizes="100%"

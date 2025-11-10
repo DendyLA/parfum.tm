@@ -57,4 +57,20 @@
 			margin-left: 2rem;
 		}
 	}
+	.product__btn{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 1rem 1rem;
+		font: $product-desc;
+		color: #fff;
+		background-color: $color-primary;
+		border: $color-primary 1px solid;
+		transition: all .4s;
+		margin-top: 2rem;
+		&:hover{
+			background-color: #fff;
+			color: $color-primary;
+		}
+	}
 }
