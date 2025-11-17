@@ -17,6 +17,11 @@
 
 	&__item {
 		font: $fw-bold 1.5rem/120% $main-ff;
+		text-transform: capitalize;
+		transition: .4s;
+		&:hover{
+			opacity: .7;
+		}
 	}
 
 	&__burger {
@@ -72,8 +77,9 @@
 	&__link {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: flex-start;
 		font: $brand-name;
+		text-transform: capitalize;
 	}
 
 	&__btn {
@@ -87,6 +93,9 @@
 		max-height: 0;
 		opacity: 0;
 		transition: all 0.4s ease;
+		.subNav__link{
+			font-weight: 400;
+		}
 	}
 
 	.show {

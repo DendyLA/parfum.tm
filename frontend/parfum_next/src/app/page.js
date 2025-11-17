@@ -7,22 +7,25 @@ import CompanyList from "@/components/CompanyList/CompanyList";
 import InfiniteProductList from "@/components/ProductList/InfinityProductList/InfinityProductList";
 
 
-import { getProducts, getCompanies} from "@/lib/endpoints";
+import { getProducts, getCompanies, getPromotions} from "@/lib/endpoints";
+import { getDiscountProducts } from '@/lib/getDiscountProducts'
+
 
 export default async function Home() {
-	const products = await getProducts({ page: 1, pageSize: 10 });
+	const banners = await getPromotions();
+	const products = await getProducts({ page: 1, pageSize: 5 });
+	const discountProducts = await getDiscountProducts(5);
 	const companies = await getCompanies({ page: 1, pageSize: 8 });
 
-	const recommended = products.slice(0, 5);
-	const newProducts = products.slice(0, 5);
-	const discountProducts = products.filter(p => p.discount_price).slice(0, 5);
+	const recommended = await getProducts({ pageSize: 5, ordering: 'created_at' });;
+	const newProducts = await getProducts({ pageSize: 5, ordering: '-created_at' });;
 	const homeCompanies = companies.slice(0, 8);
-
+	
   return (
     <>
 		<section className='section_padd'>
 			<div className="container">
-				<Banners/>
+				<Banners slides={banners}/>
 			</div>
 		</section>
 		<section className='section_padd'>
@@ -42,11 +45,11 @@ export default async function Home() {
 				<CompanyList company={homeCompanies}/>
 			</div>
 		</section>
-		{discountProducts?.length > 0 && (
+		{discountProducts?.length > 0 && ( 
 		<section className='section_padd'>
 			<div className="container">
-			<h4 className='title'>Акции</h4>
-			<ProductList product={discountProducts}/>
+				<h4 className='title'>Акции</h4>
+				<ProductList product={discountProducts}/>
 			</div>
 		</section>
 		)}

@@ -35,7 +35,7 @@ export default function CompanyList({ company = {} }) {
 							<Image
 								src={it.logo}
 								alt={it.name || 'company logo'}
-								width={80}
+								width={100}
 								height={80}
 								sizes="100%"
 								onLoad={() => handleImageLoad(it.title)}

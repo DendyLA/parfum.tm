@@ -9,17 +9,16 @@ class CategorySerializer(TranslatableModelSerializer):
 
     class Meta:
         model = Category
-        fields = ("id", "translations", "parent")
-        read_only_fields = ("id",)
+        fields = ("id", "translations", "parent", "slug",)
+        read_only_fields = ("id", "slug",)
 
 
-class BrandSerializer(TranslatableModelSerializer):
-    translations = TranslatedFieldsField(shared_model=Brand)
+class BrandSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Brand
-        fields = ("id", "translations", "logo")
-        read_only_fields = ("id",)
+        fields = ("id", 'name', "logo", "slug",)
+        read_only_fields = ("id", "slug",)
 
 
 
@@ -44,8 +43,9 @@ class ProductSerializer(TranslatableModelSerializer):
             "variations",
             "created_at",
             "updated_at",
+            "slug",
         )
-        read_only_fields = ("id", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at", "slug",)
 
 
 class PromotionSerializer(TranslatableModelSerializer):

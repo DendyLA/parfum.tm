@@ -15,21 +15,22 @@ import "swiper/css/pagination";
 import styles from "./Banners.module.scss";
 
 export default function Banners({ slides = [] }) {
-  const items = slides.length
-    ? slides
-    : [
-        { id: 1, title: "Slide 1", image: "/images/banners/promo_1.jpg" },
-        { id: 2, title: "Slide 2", image: "/images/banners/promo_2.jpg" },
-        { id: 3, title: "Slide 3", image: "/images/banners/promo_3.jpg" },
-      ];
+   // Если есть акции — используем их, иначе — fallback
+	const items = slides?.map((promo) => ({
+		id: promo.id,
+		title: promo.translations?.title || "Promo",
+		image: promo.image,
+		link: promo.translations?.link || "#",
+	})) || []; // пустой массив, если slides нет
 
-  const [loadedImages, setLoadedImages] = useState({});
 
-  const handleImageLoad = (id) => {
-    setLoadedImages((prev) => ({ ...prev, [id]: true }));
-  };
+	const [loadedImages, setLoadedImages] = useState({});
 
-  return (
+	const handleImageLoad = (id) => {
+		setLoadedImages((prev) => ({ ...prev, [id]: true }));
+	};
+
+  	return (
 		<div className={styles.banner}>
 			<Swiper
 				modules={[Navigation, Pagination, Autoplay, A11y]}

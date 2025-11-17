@@ -71,6 +71,7 @@ THIRD_PARTY_APPS = [
 
     # SEO
     "meta",
+
 ]
 
 LOCAL_APPS = [
@@ -138,8 +139,11 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
-	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,  # количество товаров на одной странице
+	'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+	'DEFAULT_PAGINATION_CLASS': 'products.pagination.CustomPageNumberPagination',
+    'PAGE_SIZE': 5,  # количество товаров на одной странице
+	'PAGE_SIZE_QUERY_PARAM': 'page_size',  # можно менять через query param
+    'MAX_PAGE_SIZE': 50,  # ограничение сверху
 }
 
 
@@ -219,7 +223,7 @@ USE_TZ = True
 LANGUAGE_CODE = "ru"
 
 LANGUAGES = [
-    ("en", "English"),
+    # ("en", "English"),
     ("ru", "Русский"),
     ("tk", "Türkmençe"),
 ]
@@ -227,7 +231,7 @@ LANGUAGES = [
 
 PARLER_LANGUAGES = {
     None: (
-        {"code": "en"},
+        # {"code": "en"},
         {"code": "ru"},
         {"code": "tk"},
     ),

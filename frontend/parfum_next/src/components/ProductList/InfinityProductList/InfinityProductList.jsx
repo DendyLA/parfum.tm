@@ -15,7 +15,7 @@ export default function InfiniteProductList({ endpoint }) {
 	const [hasMore, setHasMore] = useState(true);
 
 	const loaderRef = useRef(null);
-
+	
 	// загрузка товаров
 	const loadProducts = async () => {
 		if (loading || !hasMore) return;

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Search, ShoppingBasket } from "lucide-react";
 
 import CategoryMenu from "../CategoryMenu/CategoryMenu";
+import Cart from "../Cart/Cart";
 
 import styles from './Header.module.scss';
 
@@ -14,6 +15,10 @@ import styles from './Header.module.scss';
 
 
 export default function Header() {
+	const [isCartOpen, setIsCartOpen] = useState(false); 
+
+	const handleCartToggle = () => setIsCartOpen(!isCartOpen);
+	const handleCartClose = () => setIsCartOpen(false);
 
 	return (
 		<header className={styles.header}>
@@ -52,14 +57,15 @@ export default function Header() {
 					<div className={`${styles.header__logo}`}>
 						<Link className="link" href=""><Image src="/images/logo/logo.svg" alt="Company Logo" width={180} height={60} priority/></Link>
 					</div>
-					<div className={`${styles.header__basket} link-icon`}>
+					<div className={`${styles.header__basket} link-icon`} onClick={handleCartToggle}>
 						<ShoppingBasket size={32} strokeWidth={1} absoluteStrokeWidth />
 					</div>
 				</div>
 
 				<CategoryMenu/>
 			</div>
-			
+			{/* Корзина */}
+			{isCartOpen && <Cart onClose={handleCartClose} />}
 		</header>
 	)
 

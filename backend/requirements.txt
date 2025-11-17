@@ -5,6 +5,9 @@ Django==5.2.6
 djangorestframework==3.16.1
 djangorestframework-simplejwt==5.5.1
 
+#slugify
+python-slugify==8.0.1
+
 # PostgreSQL
 psycopg2-binary==2.9.10
 
@@ -25,6 +28,7 @@ django-ckeditor==6.7.3
 django-extensions==4.1
 django-debug-toolbar==6.0.0
 
+
 # Polymorphic models (для наследования моделей товаров)
 django-polymorphic==4.1.0
 
@@ -39,3 +43,7 @@ django-parler-rest==2.2
 pytest==8.4.2
 pytest-django==4.11.1
 pytest-cov==7.0.0
+
+
+#filter
+django-filter==25.2
