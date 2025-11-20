@@ -58,16 +58,40 @@ export async function getSubcategories(parentId, { page = 1, pageSize = 50 } = {
  * Get category Products
  */
 export async function getCategoryProducts(
-    categoryId,
-    { page = 1, pageSize = 10, ordering, discount_price } = {}
+	categoryId,
+	{ page = 1, pageSize = 50, ordering, discount_price } = {}
 ) {
-    let url = `/products/?category=${categoryId}&page=${page}&page_size=${pageSize}`;
+	const params = new URLSearchParams();
 
-    if (ordering) url += `&ordering=${ordering}`;
-    if (discount_price !== undefined) url += `&discount_price=${discount_price}`;
+	params.append("category", categoryId);
+	params.append("page", page);
+	params.append("page_size", pageSize);
 
-    return await apiFetch(url);
+	if (ordering) params.append("ordering", ordering);
+	if (discount_price !== undefined) params.append("discount_price", discount_price);
+
+	return await apiFetch(`/products?${params.toString()}`);
 }
+
+
+
+export async function getCategoryBySlug(slug) {
+	const params = new URLSearchParams();
+	params.append("slug", slug);
+
+	const data = await apiFetch(`/categories/?${params.toString()}`);
+	
+	// Возвращаем первый объект из results (slug уникален)
+	if (data && data.length > 0) {
+		
+		return data[0];
+	}
+
+	throw new Error(`Категория с slug="${slug}" не найдена`);
+}
+
+
+
 
 /**
  * Get active banners

@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .brands{
 	position: fixed;
 	top: 0;
@@ -6,4 +8,62 @@
 	height: 100vh;
 	background-color: rgba($color: #000000, $alpha: .6);
 	z-index: 999;
+
+	&__wrapper{
+		width: 70vw;
+		height: 100vh;
+		position: absolute;
+		right: 0;
+		top: 0;
+		background-color: #fff;
+		padding: 7rem 7rem;
+	}
+	&__title{
+		margin-bottom: 0;
+	}
+	&__top{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-bottom: 1px #cecece solid;
+		padding-bottom: 3rem;
+	}
+	&__close{
+		cursor: pointer;
+		transition: all .4s;
+		&:hover{
+			opacity: .7;
+		}
+	}
+	&__content{
+		display: flex;
+		flex-direction: column;
+		gap: 4rem;
+		margin-top: 5rem;
+		height: 80%;
+		padding-right: 3rem;
+		overflow-y: auto;
+	}
+	&__item{
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+	&__letter{
+		font: $title-h4;
+	}
+	&__list{
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		font: $brand-name;
+		text-transform: capitalize;
+	}
+	& li{
+		transition: all .4s;
+		&:hover{
+			opacity: .7;
+		}
+	}
 }
+

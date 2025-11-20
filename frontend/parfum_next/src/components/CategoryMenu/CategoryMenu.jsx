@@ -12,6 +12,9 @@ export default function CategoryMenu() {
 	const [animate, setAnimate] = useState(false);
 	const [openCategories, setOpenCategories] = useState({});
 
+	const [brandsOpen, setBrandsOpen] = useState(false); // <-- для открытия Brands
+	const [brandsAnimate, setBrandsAnimate] = useState(false);
+
 	// Получение всех категорий со всех страниц
 	async function fetchAllCategories() {
 		let page = 1;
@@ -66,6 +69,46 @@ export default function CategoryMenu() {
 
 		fetchCategories();
 	}, []);
+
+	
+	useEffect(() => {
+		if (brandsOpen) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "";
+		}
+
+		return () => {
+			document.body.style.overflow = "";
+		};
+	}, [brandsOpen]);
+
+	
+	useEffect(() => {
+		if (isOpen) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "";
+		}
+
+		return () => {
+			document.body.style.overflow = "";
+		};
+	}, [isOpen]);
+
+
+
+
+	const toggleBrands = () => {
+		if (brandsOpen) {
+			setBrandsAnimate(false);
+			setTimeout(() => setBrandsOpen(false), 300); // закрытие с анимацией
+		} else {
+			setBrandsOpen(true);
+			setTimeout(() => setBrandsAnimate(true), 10); // открытие с анимацией
+		}
+	};
+
 
 	const toggleMenu = () => {
 		if (isOpen) {
@@ -128,8 +171,15 @@ export default function CategoryMenu() {
 					</li>
 				))}
 			</ul>
+			<ul className="nav__brands">
+				<Link href=''><li className={styles.nav__item} onClick={toggleBrands}>Бренды</li></Link>
+			</ul>
+			{brandsOpen && (
+				<Brands onClose={() => setBrandsOpen(false)}/>
+			)}
+
+
 			
-			<Brands/>
 			{isOpen && (
 				<div
 					className={styles.subNav}

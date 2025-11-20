@@ -55,7 +55,7 @@ export default function Header() {
 						</form>
 					</div>
 					<div className={`${styles.header__logo}`}>
-						<Link className="link" href=""><Image src="/images/logo/logo.svg" alt="Company Logo" width={180} height={60} priority/></Link>
+						<Link className="link" href="/"><Image src="/images/logo/logo.svg" alt="Company Logo" width={180} height={60} priority/></Link>
 					</div>
 					<div className={`${styles.header__basket} link-icon`} onClick={handleCartToggle}>
 						<ShoppingBasket size={32} strokeWidth={1} absoluteStrokeWidth />

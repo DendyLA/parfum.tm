@@ -2,31 +2,39 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import ProductCard from "@/components/ProductCard/ProductCard";
-import Skeleton from "@mui/material/Skeleton";
+import styles from "./InfinityProductsList.module.scss";
+import { getProducts, getCategoryProducts } from "@/lib/endpoints";
 
-import styles from "./InfinityProductsList.module.scss"; // используем те же стили что и ProductList
-
-import { apiFetch } from "@/lib/api"; // твоя универсальная функция запроса
-
-export default function InfiniteProductList({ endpoint }) {
+export default function InfiniteProductList({ categoryId }) {
 	const [products, setProducts] = useState([]);
 	const [page, setPage] = useState(1);
 	const [loading, setLoading] = useState(false);
 	const [hasMore, setHasMore] = useState(true);
 
 	const loaderRef = useRef(null);
-	
-	// загрузка товаров
+
 	const loadProducts = async () => {
 		if (loading || !hasMore) return;
 		setLoading(true);
+
 		try {
-			// добавляем page и page_size к запросу
-			const data = await apiFetch(`${endpoint}?page=${page}&page_size=5`);
+			let data;
+			if (categoryId) {
+				data = await getCategoryProducts(categoryId, { page, pageSize: 5 });
+			} else {
+				data = await getProducts({ page, pageSize: 5 });
+			}
+
 			if (!data || data.length === 0) {
 				setHasMore(false);
 			} else {
-				setProducts(prev => [...prev, ...data]);
+				setProducts(prev => {
+				// Фильтруем новые продукты, которых ещё нет в prev
+				const newProducts = data.filter(
+					d => !prev.some(p => p.id === d.id)
+				);
+				return [...prev, ...newProducts];
+				});
 				setPage(prev => prev + 1);
 			}
 		} catch (e) {
@@ -38,15 +46,18 @@ export default function InfiniteProductList({ endpoint }) {
 	};
 
 	useEffect(() => {
-		loadProducts(); // загружаем первые 5
-	}, []);
+		// Сбрасываем список и пагинацию, если categoryId изменился
+		setProducts([]);
+		setPage(1);
+		setHasMore(true);
+		loadProducts();
+	}, [categoryId]);
 
-	// IntersectionObserver для бесконечного скролла
 	useEffect(() => {
 		const observer = new IntersectionObserver(
-			(entries) => {
+			entries => {
 				if (entries[0].isIntersecting) {
-					loadProducts();
+				loadProducts();
 				}
 			},
 			{ threshold: 0.1 }
@@ -64,8 +75,8 @@ export default function InfiniteProductList({ endpoint }) {
 			{products.map(product => (
 				<ProductCard key={product.id} product={product} />
 			))}
-			{/* невидимый элемент для IntersectionObserver */}
 			<div ref={loaderRef}></div>
+			{loading && <p>Загрузка...</p>}
 		</ul>
 	);
 }
