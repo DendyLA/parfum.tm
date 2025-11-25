@@ -1,0 +1,19 @@
+@import '../../styles/variables';
+
+.breadcrumbs{
+	text-transform: capitalize;
+	ol{
+		display: flex;	
+		justify-content: center;
+		font: $brand-name;
+		gap: 1rem;
+		li{
+			display: flex;
+			gap: 1rem;
+			span{
+				color: $color-secondary;
+			}
+		}
+	}
+	
+}

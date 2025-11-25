@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import styles from "./InfinityProductsList.module.scss";
 import { getProducts, getCategoryProducts } from "@/lib/endpoints";
+import Skeleton from "@mui/material/Skeleton";
 
-export default function InfiniteProductList({ categoryId }) {
+export default function InfiniteProductList({ categoryId, filters }) {
 	const [products, setProducts] = useState([]);
 	const [page, setPage] = useState(1);
 	const [loading, setLoading] = useState(false);
@@ -13,27 +14,34 @@ export default function InfiniteProductList({ categoryId }) {
 
 	const loaderRef = useRef(null);
 
-	const loadProducts = async () => {
+	const loadProducts = useCallback(async () => {
 		if (loading || !hasMore) return;
 		setLoading(true);
 
 		try {
 			let data;
 			if (categoryId) {
-				data = await getCategoryProducts(categoryId, { page, pageSize: 5 });
+				data = await getCategoryProducts(categoryId, {
+					page,
+					pageSize: 5,
+					...filters,
+				});
 			} else {
-				data = await getProducts({ page, pageSize: 5 });
+				data = await getProducts({
+					page,
+					pageSize: 5,
+					...filters,
+				});
 			}
 
 			if (!data || data.length === 0) {
 				setHasMore(false);
 			} else {
 				setProducts(prev => {
-				// Фильтруем новые продукты, которых ещё нет в prev
-				const newProducts = data.filter(
-					d => !prev.some(p => p.id === d.id)
-				);
-				return [...prev, ...newProducts];
+					const newProducts = data.filter(
+						d => !prev.some(p => p.id === d.id)
+					);
+					return [...prev, ...newProducts];
 				});
 				setPage(prev => prev + 1);
 			}
@@ -43,40 +51,49 @@ export default function InfiniteProductList({ categoryId }) {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [categoryId, filters, page, loading, hasMore]);
 
+	// Сбрасываем продукты при смене категории или фильтров
 	useEffect(() => {
-		// Сбрасываем список и пагинацию, если categoryId изменился
 		setProducts([]);
 		setPage(1);
 		setHasMore(true);
-		loadProducts();
-	}, [categoryId]);
+	}, [categoryId, filters]);
 
+	// Запуск загрузки после сброса
 	useEffect(() => {
-		const observer = new IntersectionObserver(
-			entries => {
-				if (entries[0].isIntersecting) {
-				loadProducts();
-				}
-			},
-			{ threshold: 0.1 }
-		);
+		if (page === 1 && hasMore && !loading) {
+			loadProducts();
+		}
+	}, [page, hasMore, loading, loadProducts]);
 
-		if (loaderRef.current) observer.observe(loaderRef.current);
+	// IntersectionObserver
+	useEffect(() => {
+		const observer = new IntersectionObserver(entries => {
+			if (entries[0].isIntersecting && !loading && hasMore) {
+				loadProducts();
+			}
+		});
+
+		const node = loaderRef.current;
+		if (node) observer.observe(node);
 
 		return () => {
-			if (loaderRef.current) observer.unobserve(loaderRef.current);
+			if (node) observer.unobserve(node);
 		};
-	}, [loaderRef, loading, hasMore]);
+	}, [loadProducts, loading, hasMore]);
 
 	return (
-		<ul className={styles.products}>
-			{products.map(product => (
-				<ProductCard key={product.id} product={product} />
-			))}
-			<div ref={loaderRef}></div>
-			{loading && <p>Загрузка...</p>}
-		</ul>
+		<>
+			<ul className={styles.products}>
+				{products.map(product => (
+					<ProductCard key={product.id} product={product} />
+				))}
+				<div ref={loaderRef} style={{ height: "1px" }}></div>
+				
+			</ul>
+			{!hasMore && <p className={styles.products__info}>Больше товаров нет</p>}
+		</>
 	);
 }
+ 

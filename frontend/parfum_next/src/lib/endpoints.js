@@ -3,18 +3,41 @@ import { apiFetch } from "./api";
 /**
  * Получить список товаров
  */
-export async function getProducts({ page = 1, pageSize = 10, category, discount_price, ordering } = {}) {
+export async function getProducts({
+	page = 1,
+	pageSize = 10,
+	category, // <- сюда передаём айди категории
+	min_price,
+	max_price,
+	has_discount,
+	ordering,
+} = {}) {
 	const params = new URLSearchParams();
 
 	params.append("page", page);
 	params.append("page_size", pageSize);
 
-	if (category) params.append("category", category);
-	if (discount_price !== undefined) params.append("discount_price", discount_price);
-	if (ordering) params.append("ordering", ordering); // 'created_at' или '-created_at'
+	// Если категория есть, добавляем её в запрос
+	if (category !== undefined && category !== null) {
+		params.append("category", category);
+	}
+	if (ordering) params.append("ordering", ordering);
+	if (min_price !== undefined) params.append("min_price", min_price);
+	if (max_price !== undefined) params.append("max_price", max_price);
+	if (has_discount !== undefined) params.append("has_discount", has_discount);
 
-	return await apiFetch(`/products/?${params.toString()}`);
+	// return await apiFetch(`/products/?${params.toString()}`);
+	try {
+		return await apiFetch(`/products/?${params.toString()}`);
+	} catch (err) {
+		if (err.message.includes("404")) {
+		// Если 404 — возвращаем пустой массив
+		return [];
+		}
+		throw err;
+	}
 }
+
 
 
 /**
@@ -48,31 +71,17 @@ export async function getCategoryById(id) {
 }
 
 
-export async function getSubcategories(parentId, { page = 1, pageSize = 50 } = {}) {
-    let url = `/categories/?parent=${parentId}&page=${page}&page_size=${pageSize}`;
-    return await apiFetch(url);
-}
-
-
 /**
  * Get category Products
  */
-export async function getCategoryProducts(
-	categoryId,
-	{ page = 1, pageSize = 50, ordering, discount_price } = {}
-) {
-	const params = new URLSearchParams();
-
-	params.append("category", categoryId);
-	params.append("page", page);
-	params.append("page_size", pageSize);
-
-	if (ordering) params.append("ordering", ordering);
-	if (discount_price !== undefined) params.append("discount_price", discount_price);
-
-	return await apiFetch(`/products?${params.toString()}`);
+export async function getCategoryProducts(categoryId, params = {}) {
+	return await getProducts({ ...params, category: categoryId });
 }
 
+
+export async function getCategoryTree(id) {
+    return await apiFetch(`/categories/${id}/tree/`);
+}
 
 
 export async function getCategoryBySlug(slug) {

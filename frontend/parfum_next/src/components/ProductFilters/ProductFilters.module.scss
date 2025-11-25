@@ -1,0 +1,58 @@
+@import '../../styles/_variables.scss';
+
+.filters{
+	display: flex;
+	justify-content: flex-start;
+	gap: 3rem;
+	align-items: center;
+	padding: 3rem 0;
+	font: $brand-name;
+	color: $color-secondary;
+}
+
+.sorting{
+	display: flex;
+	gap: 1.5rem;
+	.active{
+		color: $color-primary;
+	}
+	span{
+		display: flex;
+		align-items: center;
+		gap: .2rem;
+		cursor: pointer;
+	}
+
+}
+
+.price__range{
+	display: flex;
+	gap: 1rem;
+	input{
+		width: 14rem;
+	}
+}
+
+.discount{
+	input{
+		display: none;
+	}
+	.active{
+		color: $color-primary;
+	}
+	label{
+		cursor: pointer;
+	}
+}
+
+
+
+.inputNumber::-webkit-inner-spin-button,
+.inputNumber::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.inputNumber {
+  -moz-appearance: textfield;
+}
