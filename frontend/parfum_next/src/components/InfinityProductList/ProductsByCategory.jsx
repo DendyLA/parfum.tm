@@ -4,119 +4,146 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import styles from "./InfinityProductsList.module.scss";
 import { getProducts, getCategoryTree } from "@/lib/endpoints";
-import { Skeleton } from "@mui/material";
 
-export default function ProductsByCategory({ categoryId }) {
-	const [products, setProducts] = useState([]);
-	const [categoryStack, setCategoryStack] = useState([]); // список всех id из дерева
-	const [loading, setLoading] = useState(false);
-	const [hasMore, setHasMore] = useState(true);
+export default function ProductsByCategory({ categoryId, filters = {} }) {
+    const [products, setProducts] = useState([]);
+    const [queue, setQueue] = useState([]);        // [{ id: 23, page: 1 }, ...]
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const loaderRef = useRef(null);
 
-	const loaderRef = useRef(null);
+    const flattenTree = (node) => {
+        let result = [node.id];
+        if (node.children && node.children.length > 0) {
+            node.children.forEach(child => {
+                result = result.concat(flattenTree(child));
+            });
+        }
+        return result;
+    };
 
-	// ================================
-	// Преобразование дерева → список id
-	// ================================
-	const flattenTree = useCallback((node) => {
-		const ids = [node.id];
+    // Сброс при смене категории
+    useEffect(() => {
+        if (!categoryId) return;
 
-		if (node.children && node.children.length > 0) {
-			for (const child of node.children) {
-				ids.push(...flattenTree(child));
-			}
-		}
-		return ids;
-	}, []);
+        setProducts([]);
+        setQueue([]);
+        setHasMore(true);
 
-	// ================================
-	// Загрузка дерева категорий
-	// ================================
-	useEffect(() => {
-		if (!categoryId) return;
+        getCategoryTree(categoryId)
+            .then(tree => {
+                const ids = flattenTree(tree);
+                if (ids.length === 0) {
+                    setHasMore(false);
+                    return;
+                }
+                setQueue(ids.map(id => ({ id, page: 1 })));
+            })
+            .catch(err => {
+                console.error("Ошибка дерева категорий:", err);
+                setHasMore(false);
+            });
+    }, [categoryId, filters]);
 
-		setProducts([]);
-		setHasMore(true);
+    // Загрузка товаров
+    const loadMore = useCallback(async () => {
+        if (loading || queue.length === 0) return;
 
-		getCategoryTree(categoryId).then(tree => {
-			const ids = flattenTree(tree);
+        setLoading(true);
+        const current = queue[0];
+        if (!current) {
+            setLoading(false);
+            return;
+        }
 
-			setCategoryStack(ids.map(id => ({ id, page: 1 })));
-		});
-	}, [categoryId, flattenTree]);
+        try {
+            const data = await getProducts({
+                page: current.page,
+                pageSize: 10,
+                category: current.id,
+                ...filters
+            });
 
-	// ================================
-	// Загрузка товаров для категорий
-	// ================================
-	const loadProducts = useCallback(async () => {
-		if (loading || categoryStack.length === 0) return;
-		setLoading(true);
+            if (Array.isArray(data) && data.length > 0) {
+                setProducts(prev => {
+                    const newItems = data.filter(item => !prev.some(p => p.id === item.id));
+                    return [...prev, ...newItems];
+                });
 
-		const current = categoryStack[0];
+                // Увеличиваем страницу
+                setQueue(prev => {
+                    const updated = [...prev];
+                    if (updated[0]) updated[0] = { ...updated[0], page: updated[0].page + 1 };
+                    return updated;
+                });
+            } else {
+                // Если пустой массив, убираем категорию из очереди
+                setQueue(prev => prev.slice(1));
+            }
+        } catch (err) {
+            console.warn(`Ошибка загрузки категории ${current.id}, страница ${current.page}`);
+            setQueue(prev => prev.slice(1));
+        } finally {
+            setLoading(false);
+        }
+    }, [queue, filters, loading]);
 
-		try {
-			const data = await getProducts({
-				page: current.page,
-				pageSize: 5,
-				category: current.id
-			});
+    // Intersection Observer
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && !loading && queue.length > 0) {
+                    loadMore();
+                }
+            },
+            { threshold: 0.1 }
+        );
 
-			if (data && data.length > 0) {
-				setProducts(prev => [
-					...prev,
-					...data.filter(d => !prev.some(p => p.id === d.id))
-				]);
+        if (loaderRef.current) observer.observe(loaderRef.current);
 
-				// увеличиваем страницу
-				const updated = [...categoryStack];
-				updated[0] = { ...current, page: current.page + 1 };
-				setCategoryStack(updated);
+        return () => {
+            if (loaderRef.current) observer.unobserve(loaderRef.current);
+        };
+    }, [loadMore, loading, queue]);
 
-			} else {
-				// товаров нет -> идем к следующей категории
-				const updated = [...categoryStack];
-				updated.shift();
-				setCategoryStack(updated);
+    // Автозагрузка при появлении новой очереди
+    useEffect(() => {
+        if (!loading && queue.length > 0) {
+            loadMore();
+        }
+    }, [queue]);
 
-				if (updated.length === 0) setHasMore(false);
-			}
-		} catch (err) {
-			console.error("Ошибка загрузки товаров:", err);
-			setHasMore(false);
-		}
+    // hasMore = false, если очередь пустая и загрузка закончена
+    useEffect(() => {
+        if (queue.length === 0 && !loading) {
+            setHasMore(false);
+        }
+    }, [queue, loading]);
 
-		setLoading(false);
-	}, [loading, categoryStack]);
+    const showNoProducts = !loading && products.length === 0 && !hasMore;
 
-	// ================================
-	// Intersection Observer
-	// ================================
-	useEffect(() => {
-		const observer = new IntersectionObserver(entries => {
-			if (entries[0].isIntersecting && !loading && hasMore) {
-				loadProducts();
-			}
-		});
+    return (
+        <>
+            <ul className={styles.products}>
+                {products.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
+                <div ref={loaderRef} style={{ height: "20px" }} />
+            </ul>
 
-		const node = loaderRef.current;
-		if (node) observer.observe(node);
+            {loading && (
+                <div style={{ padding: "40px 0", textAlign: "center" }}>
+                    Загрузка товаров...
+                </div>
+            )}
 
-		return () => node && observer.unobserve(node);
-	}, [loadProducts, loading, hasMore]);
+            {!hasMore && products.length > 0 && (
+                <p className={styles.products__info}>Больше товаров нет</p>
+            )}
 
-
-
-
-	return (
-		<>
-			<ul className={styles.products}>
-				{products.map(product => (
-					<ProductCard key={product.id} product={product} />
-				))}
-				<div ref={loaderRef} style={{ height: "10px" }} />
-			</ul>
-			
-			
-			{!hasMore && <p className={styles.products__info}>Больше товаров нет</p>}
-		</>
-	);
+            {showNoProducts && (
+                <p className={styles.products__info}>Товары не найдены</p>
+            )}
+        </>
+    );
 }

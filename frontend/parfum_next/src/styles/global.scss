@@ -76,22 +76,3 @@ html{
 }
 
 
-.skeleton {
-	width: 100% !important;
-	height: 100% !important;
-	position: absolute !important;
-	left: 0;
-	top: 0;
-
-	&__wrapper{
-		display: flex;
-		justify-content: space-between;
-		flex-wrap: wrap;
-		gap: 2rem;
-		padding: 4rem 0;
-	}
-	&__card{
-		width: 22%;
-	}
-}
-

@@ -31,20 +31,7 @@ export default function CategoryFetcher({ slug }) {
 		fetchCategory();
 	}, [slug]);
 
-	// --- SKELETON ---
-	if (loading) {
-		return (
-			<div className="skeleton__wrapper">
-				{Array.from({ length: 4 }).map((_, i) => (
-					<div className="skeleton__card" key={i}>
-						<Skeleton animation="wave" variant="rectangular" height={250} />
-						<Skeleton animation="wave" height={20} style={{ marginTop: 10 }} />
-						<Skeleton animation="wave" width={100} height={20} />
-					</div>
-				))}
-			</div>
-		);
-	}	
+
 
 	if (!category) return <p>Категория не найдена</p>;
 

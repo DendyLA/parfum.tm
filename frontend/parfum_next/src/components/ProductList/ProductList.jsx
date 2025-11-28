@@ -4,19 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 
 import ProductCard from "../ProductCard/ProductCard";
-
 import styles from './ProductList.module.scss';
 
-
-export default function ProductList({product = {}}) {
-
+export default function ProductList({ product = [] }) {
 	
-
-  	return (
+	return (
 		<ul className={styles.products}>
-			 {product.map((product, i) => (
-				<ProductCard key={i} product={product} />
+			{product.map((product) => (
+				<ProductCard key={product.id} product={product} />
 			))}
 		</ul>
-	)
-}	
+	);
+}

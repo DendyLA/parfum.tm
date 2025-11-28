@@ -15,9 +15,10 @@ export default async function Home() {
 	const products = await getProducts({ page: 1, pageSize: 5 });
 	const discountProducts = await getDiscountProducts(5);
 
-	const recommended = await getProducts({ pageSize: 5, ordering: 'created_at' });;
-	const newProducts = await getProducts({ pageSize: 5, ordering: '-created_at' });;
+	const recommended = await getProducts({ pageSize: 5, is_recommended : true });
+	const newProducts = await getProducts({ pageSize: 5, ordering: '-created_at' });
 	
+	console.log('recommended', recommended);
   return (
     <>
 		<section className='section_padd'>
@@ -28,7 +29,7 @@ export default async function Home() {
 		<section className='section_padd'>
 			<div className="container">
 				<h4 className='title'>Рекомендуем</h4>
-				<ProductList product={recommended}/>
+				<ProductList product={recommended} />
 			</div>
 		</section>
 		<section className='section_padd'>

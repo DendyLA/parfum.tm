@@ -87,7 +87,7 @@ export default function Cart({ onClose }) {
 													<span className={styles.cart__old}>{item.price} man</span>
 												</>
 											) : (
-												<span>{item.price}₽</span>
+												<span>{item.price} man</span>
 											)}
 										</div>
 										<button className={styles.cart__delete} onClick={() => handleRemove(item.id)}>

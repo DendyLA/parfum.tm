@@ -55,9 +55,11 @@ export default function Brands({ onClose }) {
 						<div className={styles.brands__letter}>{letter}</div>
 						<ul className={styles.brands__list}>
 							{grouped[letter].map((c) => (
-							<Link key={c.id} href={`#`}>
-								<li>{c.name}</li>
-							</Link>
+								<li key={c.id}>
+								<Link href={`/brands/${c.slug}`}>
+									{c.name}
+								</Link>
+								</li>
 							))}
 						</ul>
 					</div>
