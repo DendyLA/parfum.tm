@@ -7,35 +7,27 @@ import Skeleton from "@mui/material/Skeleton";
 import styles from "./ProductDetail.module.scss";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import { getProductBySlug } from "@/lib/endpoints";
+import ProductGallery from "../ProductGallery/ProductGallery";
 
-
-// Импортируем только необходимые стили Swiper
-import 'swiper/css';
-import 'swiper/css/free-mode';
-import 'swiper/css/thumbs';
-
-// Импорт Fancybox CSS — оставляем только рабочий путь
-import "@fancyapps/ui/dist/fancybox/fancybox.css";
-
-// Импорт компонентов
-import { Fancybox } from '@fancyapps/ui';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode, Thumbs } from 'swiper/modules';
+import { addToCart } from "@/lib/addToCart";
 
 
 
 export default function ProductDetail({ slug }) {
-	const [activeIndex, setActiveIndex] = useState(0);
-	const [product, setProduct] = useState(null);
+    const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+	const [added, setAdded] = useState(false);
 
-	const breadcrumbItems = [
-		{ name: "PARFUMTM", href: "/" },
-		{ name: "", href: `/category/` },
-		{ name: '' } // текущее имя категории
-	];
 
-	useEffect(() => {
+	const handleAddToCart = () => {
+		addToCart(product);
+		setAdded(true);
+		setTimeout(() => setAdded(false), 1500);
+	};
+
+    
+
+    useEffect(() => {
         if (!slug) return;
 
         setLoading(true);
@@ -47,57 +39,54 @@ export default function ProductDetail({ slug }) {
     if (loading) return <p>Загрузка...</p>;
     if (!product) return <p>Продукт не найден</p>;
 
+    // ❗ Единственное добавление — собираем массив картинок
+    const images = [
+        product.image,
+        ...(product.gallery?.map(g => g.image) ?? [])
+    ];
 
+	const breadcrumbItems = [
+        { name: "PARFUMTM", href: "/" },
+        { name: product.category.translations.ru.name, href: `/categories/${product.category.slug}` },
+        { name: product.translations.ru.name }
+    ];
 
 	
-	console.log(product)
-	return (
-		<div className="product">
-			<Breadcrumbs items={breadcrumbItems}/>
-			<div className="product__wrapper">
-				<div className="product__info">
-					<div className="product__name"></div>
-					<div className="product__category"></div>
-				</div>
-				<div className="product__gallery">
-					{/* Основное фото */}
-					<div className="main-image" style={{ textAlign: 'center' }}>
-						{images[activeIndex] && (
-						<a data-fancybox="gallery" href={images[activeIndex]}>
-							<Image
-							src={images[activeIndex]}
-							alt={`Product ${activeIndex}`}
-							width={500}
-							height={500}
-							style={{ borderRadius: '10px', objectFit: 'contain' }}
-							/>
-						</a>
-						)}
-					</div>
+    return (
+        <div className={styles.product}>
+            <Breadcrumbs items={breadcrumbItems} />
+            <div className={styles.product__wrapper}>
+                <div className={styles.product__info}>
+					<div className={styles.product__hit}>Лучший выбор</div>
+                    <div className={styles.product__name}>{product.translations.ru.name}</div>
+                    <div className={styles.product__category}>{product.category.translations.ru.name}</div>
+                </div>
+                <div className={styles.product__gallery}>
 
-					{/* Мини-карусель */}
-					<Swiper
-						slidesPerView={images.length > 5 ? 5 : images.length}
-						spaceBetween={10}
-						freeMode={true}
-						watchSlidesProgress
-						modules={[FreeMode, Thumbs]}
-						style={{ marginTop: '20px', justifyContent: 'center', display: 'flex' }}
-					>
-						{images.map((img, index) => (
-						<SwiperSlide key={index} onClick={() => setActiveIndex(index)}>
-							<Image
-							src={img}
-							alt={`Thumb ${index}`}
-							width={activeIndex === index ? 80 : 60}
-							height={activeIndex === index ? 80 : 60}
-							/>
-						</SwiperSlide>
-						))}
-					</Swiper>
+                    {/* ❗ Передаём изображения в галерею */}
+                    <ProductGallery images={images} />
+
+                </div>
+                <div className={styles.product__order}>
+					<div className={styles.price}>
+						{product.discount_price ? (
+							<>
+								<div className={styles.price__new}>{product.discount_price} man</div>
+								<div className={styles.price__old}>{product.price} man</div>
+							</>
+						) : (
+							<div className={styles.price__static}>{product.price}</div>
+						)}
+						
+					</div>
+					<div className="variations"></div>
+					<div className={styles.product__btn }  onClick={handleAddToCart}>{added ? "Добавлено" : "Купить"}</div>
+					<div className={styles.product__available}>Есть в наличии!</div>
 				</div>
-				<div className="product__order"></div>
+            </div>
+			<div className="product__about">
+				
 			</div>
-		</div>
-	);
+        </div>
+    );
 }

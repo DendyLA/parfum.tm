@@ -1,0 +1,98 @@
+@import '../../styles/variables';
+
+
+.product{
+	padding: 1rem 0;
+	&__wrapper{
+		padding: 5rem 0;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: 1fr;
+		grid-column-gap: 3rem;
+		align-items: center;
+	}
+	&__info{
+		grid-area: 1 / 1 / 2 / 2;
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+	&__gallery{
+		grid-area: 1 / 2 / 2 / 3;
+		width: 550px;
+	}
+	&__order{
+		grid-area: 1 / 3 / 2 / 4;
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+	&__name{
+		font: $product-name;
+		// text-transform: capitalize;
+	}
+	&__category{
+		font: $small-text;
+		text-transform: capitalize;
+		color: $color-secondary;
+	}
+
+	&__btn{
+		color: #fff;
+		border: 1px solid #212121;
+		background: #212121;
+		padding-right: 54px;
+  		padding-left: 54px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: auto;
+		min-height: 48px;
+		cursor: pointer;
+		transition: all .4s;
+		&:hover{
+			background: #fff;
+			color: #212121;
+		}
+	}
+
+	&__available{
+		font: $price-old;
+		color: #a0a0a0;
+	}
+	&__hit{
+		width: fit-content;
+		margin: 0 0 8px 0;
+		padding: 5px 6px 5px 8px;
+		color: #fff;
+		font: $product-desc;
+		font-size: 1.3rem;
+		text-transform: uppercase;
+		background: #212121;
+	}
+}
+
+.price{
+	display: flex;
+	align-items: flex-end;
+	gap: 2rem;
+
+	&__static{
+		font: $price;
+	}
+
+	&__old{
+		font: $price-old;
+		text-decoration: line-through;
+		color: #a0a0a0;
+	}
+	&__new{
+		font: $price;
+		color: #e60023;
+	}
+}
+
+
+
+

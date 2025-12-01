@@ -17,7 +17,7 @@ export default function Breadcrumbs({ items }) {
 					) : (
 					<span>{item.name}</span> // текущая страница
 					)}
-					{index < items.length - 1 && <span className={styles.separator}> &gt; </span>}
+					{index < items.length - 1 && <span className={styles.separator}> / </span>}
 				</li>
 				))}
 			</ol>
