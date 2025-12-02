@@ -4,7 +4,7 @@ import styles from "./page.module.scss";
 import Banners from "@/components/Banners/Banners";
 import ProductList from "@/components/ProductList/ProductList";
 import InfiniteProductList from "@/components/InfinityProductList/InfinityProductList";
-
+import ProductSection from "@/components/ProductSection/ProductSection";
 
 import { getProducts, getPromotions} from "@/lib/endpoints";
 import { getDiscountProducts } from '@/lib/getDiscountProducts'
@@ -18,7 +18,7 @@ export default async function Home() {
 	const recommended = await getProducts({ pageSize: 5, is_recommended : true });
 	const newProducts = await getProducts({ pageSize: 5, ordering: '-created_at' });
 	
-	console.log('recommended', recommended);
+	
   return (
     <>
 		<section className='section_padd'>
@@ -26,25 +26,11 @@ export default async function Home() {
 				<Banners slides={banners}/>
 			</div>
 		</section>
-		<section className='section_padd'>
-			<div className="container">
-				<h4 className='title'>Рекомендуем</h4>
-				<ProductList product={recommended} />
-			</div>
-		</section>
-		<section className='section_padd'>
-			<div className="container">
-				<h4 className='title'>Новинки</h4>
-				<ProductList product={newProducts}/>
-			</div>
-		</section>
+		<ProductSection title="Рекомендуем" products={recommended} />
+		<ProductSection title="Новинки" products={newProducts} />
+		
 		{discountProducts?.length > 0 && ( 
-		<section className='section_padd'>
-			<div className="container">
-				<h4 className='title'>Акции</h4>
-				<ProductList product={discountProducts}/>
-			</div>
-		</section>
+			<ProductSection title="Акции" products={discountProducts} />
 		)}
 		<section className='section_padd'>
 			<div className="container">

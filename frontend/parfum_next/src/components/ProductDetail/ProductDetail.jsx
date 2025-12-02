@@ -7,13 +7,16 @@ import Skeleton from "@mui/material/Skeleton";
 import styles from "./ProductDetail.module.scss";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import { getProductBySlug } from "@/lib/endpoints";
-import ProductGallery from "../ProductGallery/ProductGallery";
+import { addRecentProduct } from "@/lib/recentProducts";
+
+import { cleanHtml } from "@/utils/cleanHtml";
 
 import { addToCart } from "@/lib/addToCart";
 
+import ProductGallery from "../ProductGallery/ProductGallery";
 
 
-export default function ProductDetail({ slug }) {
+export default  function ProductDetail({ slug, products }) {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
 	const [added, setAdded] = useState(false);
@@ -26,10 +29,14 @@ export default function ProductDetail({ slug }) {
 	};
 
     
+	useEffect(() => {
+		if (!product) return;
+		addRecentProduct(product);
+	}, [product]);
 
     useEffect(() => {
         if (!slug) return;
-
+		
         setLoading(true);
         getProductBySlug(slug)
             .then(data => setProduct(data))
@@ -75,7 +82,7 @@ export default function ProductDetail({ slug }) {
 								<div className={styles.price__old}>{product.price} man</div>
 							</>
 						) : (
-							<div className={styles.price__static}>{product.price}</div>
+							<div className={styles.price__static}>{product.price} man</div>
 						)}
 						
 					</div>
@@ -84,9 +91,13 @@ export default function ProductDetail({ slug }) {
 					<div className={styles.product__available}>Есть в наличии!</div>
 				</div>
             </div>
-			<div className="product__about">
-				
-			</div>
+			{product.translations.ru.description && (
+				<div className={styles.product__about}>
+					<div className={styles.product__descr}>Описание</div>
+					<div className={styles.product__text} dangerouslySetInnerHTML={{ __html: cleanHtml(product.translations.ru.description) }}></div>
+				</div>
+			)}
+			
         </div>
     );
 }
