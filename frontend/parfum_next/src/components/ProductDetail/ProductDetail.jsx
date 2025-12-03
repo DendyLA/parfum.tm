@@ -13,6 +13,7 @@ import { cleanHtml } from "@/utils/cleanHtml";
 
 import { addToCart } from "@/lib/addToCart";
 
+import Variations from "../Variations/Variations";
 import ProductGallery from "../ProductGallery/ProductGallery";
 
 
@@ -21,6 +22,15 @@ export default  function ProductDetail({ slug, products }) {
     const [loading, setLoading] = useState(true);
 	const [added, setAdded] = useState(false);
 
+
+	const pencilColors = {
+		"101": "#F4C2C2",
+		"102": "#D99A6C",
+		"103": "#A45A52",
+		"104": "#6B2E2E",
+		"105": "#3C1F1F",
+		// ...добавишь остальные
+	};
 
 	const handleAddToCart = () => {
 		addToCart(product);
@@ -86,7 +96,9 @@ export default  function ProductDetail({ slug, products }) {
 						)}
 						
 					</div>
-					<div className="variations"></div>
+					<div className="variations">
+						<Variations  colors={pencilColors}/>
+					</div>
 					<div className={styles.product__btn }  onClick={handleAddToCart}>{added ? "Добавлено" : "Купить"}</div>
 					<div className={styles.product__available}>Есть в наличии!</div>
 				</div>
