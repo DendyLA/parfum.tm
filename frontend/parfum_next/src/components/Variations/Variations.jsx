@@ -10,12 +10,15 @@ import MenuItem from "@mui/material/MenuItem";
 
 import styles from "./Variations.module.scss";
 
-export default function Variations({ colors }) {
+export default function Variations({ colors, onSelect }) {
 	const [value, setValue] = useState("");
 
 	const handleChange = (event) => {
-		setValue(event.target.value);
+		const val = event.target.value.toString();
+		setValue(val);
+		if (onSelect) onSelect(val);
 	};
+
 
 	
 	if (!colors || typeof colors !== "object") return null;
@@ -24,17 +27,17 @@ export default function Variations({ colors }) {
 
 	return (
 		<FormControl fullWidth className={styles.variations}>
-			<InputLabel id="color-select-label" >Выберите оттенок</InputLabel>
+			<InputLabel id="color-select-label" >Выберите вариант</InputLabel>
 
 			<Select
 				labelId="color-select-label"
 				id="color-select"
 				value={value}
-				label="Выберите оттенок"
+				label="Выберите вариант"
 				onChange={handleChange}
 			>
 				{numbers.map((num) => (
-				<MenuItem key={num} value={num}>
+				<MenuItem key={num} value={num.toString()}>
 					<div className={styles.variations__item}>
 						<div className={styles.variations__color} style={{ backgroundColor: colors[num] }}></div>
 						<span>{num}</span>

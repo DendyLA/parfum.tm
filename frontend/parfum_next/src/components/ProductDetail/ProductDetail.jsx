@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -13,24 +13,35 @@ import { cleanHtml } from "@/utils/cleanHtml";
 
 import { addToCart } from "@/lib/addToCart";
 
+import { pencilColors } from "@/constants/pencilColors";
+
 import Variations from "../Variations/Variations";
 import ProductGallery from "../ProductGallery/ProductGallery";
 
 
-export default  function ProductDetail({ slug, products }) {
+export default  function ProductDetail({ slug }) {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
 	const [added, setAdded] = useState(false);
+	const [selectedVariation, setSelectedVariation] = useState(null);
 
 
-	const pencilColors = {
-		"101": "#F4C2C2",
-		"102": "#D99A6C",
-		"103": "#A45A52",
-		"104": "#6B2E2E",
-		"105": "#3C1F1F",
-		// ...добавишь остальные
-	};
+
+
+	const variations = product?.variations || [];
+	const variationsArray = typeof variations === "string"
+	? product.variations.split(",").map(item => item.trim())
+	: Array.isArray(product?.variations)
+		? product.variations
+		: [];
+
+
+	const filteredColors = Object.fromEntries(
+		variationsArray
+			.filter(code => pencilColors[code])   // Оставляем только существующие
+			.map(code => [code, pencilColors[code]])
+	);
+
 
 	const handleAddToCart = () => {
 		addToCart(product);
@@ -56,17 +67,21 @@ export default  function ProductDetail({ slug, products }) {
     if (loading) return <p>Загрузка...</p>;
     if (!product) return <p>Продукт не найден</p>;
 
-    // ❗ Единственное добавление — собираем массив картинок
+   
     const images = [
         product.image,
         ...(product.gallery?.map(g => g.image) ?? [])
     ];
+
+	const hasVariations = Object.keys(filteredColors).length > 0;
+	const disableBuy = hasVariations && !selectedVariation;
 
 	const breadcrumbItems = [
         { name: "PARFUMTM", href: "/" },
         { name: product.category.translations.ru.name, href: `/categories/${product.category.slug}` },
         { name: product.translations.ru.name }
     ];
+
 
 	
     return (
@@ -96,10 +111,14 @@ export default  function ProductDetail({ slug, products }) {
 						)}
 						
 					</div>
+					
 					<div className="variations">
-						<Variations  colors={pencilColors}/>
+						{Object.keys(filteredColors).length > 0 && (
+							<Variations colors={filteredColors} onSelect={setSelectedVariation}/>
+						)}
 					</div>
-					<div className={styles.product__btn }  onClick={handleAddToCart}>{added ? "Добавлено" : "Купить"}</div>
+					<div className={`${styles.product__btn} ${disableBuy ? styles.disabled : ''}` }  onClick={!disableBuy ? handleAddToCart : undefined} >{added ? "Добавлено" : "Купить"}</div>
+					{disableBuy && <span className={styles.extra}>Выберит один из вариантов товара</span>}
 					<div className={styles.product__available}>Есть в наличии!</div>
 				</div>
             </div>
