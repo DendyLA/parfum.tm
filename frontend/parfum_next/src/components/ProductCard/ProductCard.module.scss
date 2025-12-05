@@ -73,5 +73,9 @@
 			background-color: #fff;
 			color: $color-primary;
 		}
+		&:disabled{
+			background-color: #fff;
+			color: #000;
+		}
 	}
 }

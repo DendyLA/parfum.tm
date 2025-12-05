@@ -15,6 +15,6 @@ export default function RecentViewedClient() {
 
 	if (recentProducts.length === 0) return null;
 
-	
+	console.log(recentProducts)
 	return <ProductSection title="Последние просмотренные товары" products={recentProducts} />;
 }

@@ -11,7 +11,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-
+	overflow: hidden;
 	&__wrapper{
 		background-color: #fff;
 		width: 60%;
@@ -174,5 +174,20 @@
 			background-color: #fff;
 			color: $color-primary;
 		}
+	}
+}
+
+.variations{
+
+	&__item{
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 1rem;
+	}
+	&__color{
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
 	}
 }

@@ -6,8 +6,19 @@ import { X, Trash2, Plus, Minus } from "lucide-react";
 import styles from './Cart.module.scss';
 import { getCart, saveCart, removeFromCart, clearCart } from "@/lib/addToCart";
 
+import { pencilColors } from "@/constants/pencilColors";
+
 export default function Cart({ onClose }) {
 	const [cart, setCart] = useState([]);
+
+
+	useEffect(() => {
+		document.body.style.overflow = "hidden";
+
+		return () => {
+			document.body.style.overflow = "";
+		};
+	}, []);
 
 	useEffect(() => {
 		setCart(getCart());
@@ -25,8 +36,8 @@ export default function Cart({ onClose }) {
 		setCart(updated);
 	};
 
-	const handleRemove = (id) => {
-		const updated = removeFromCart(id);
+	const handleRemove = (id, selectedVariation) => {
+		const updated = removeFromCart(id, selectedVariation);
 		setCart(updated);
 	};
 
@@ -35,7 +46,6 @@ export default function Cart({ onClose }) {
 		return sum + price * item.quantity;
 	}, 0);
 
-	// 👉 Закрытие при клике на фон
 	const handleBackgroundClick = (e) => {
 		if (e.target === e.currentTarget) onClose();
 	};
@@ -53,49 +63,65 @@ export default function Cart({ onClose }) {
 				) : (
 					<div className={styles.cart__bottom}>
 						<ul className={styles.cart__list}>
-							{cart.map(item => (
-								<li key={item.id} className={styles.cart__item}>
-									<div className={styles.cart__image}>
-										<Image
-											src={item.image || "/placeholder.png"}
-											alt={item.translations.ru.name}
-											width={100}
-											height={100}
-										/>
-									</div>
 
-									<div className={styles.cart__info}>
-										<h5 className={styles.cart__name}>{item.translations.ru.name}</h5>
-										<div className={styles.cart__category}>{item.category?.translations?.ru?.name || "Без категории"}</div>
-									</div>
+							{cart.map(item => {
+								const number = item.selectedVariation;
+								const hex = number ? pencilColors[number] : null;
 
-									<div className={styles.cart__count}>
-										<button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
-											<Minus size={16} />
-										</button>
-										<span>{item.quantity}</span>
-										<button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-											<Plus size={16} />
-										</button>
-									</div>
-
-									<div className={styles.cart__right}>
-										<div className={styles.cart__price}>
-											{item.discount_price ? (
-												<>
-													<span className={styles.cart__discount}>{item.discount_price} man</span>
-													<span className={styles.cart__old}>{item.price} man</span>
-												</>
-											) : (
-												<span>{item.price} man</span>
-											)}
+								return (
+									<li key={`${item.id}-${item.variation}`} className={styles.cart__item}>
+										<div className={styles.cart__image}>
+											<Image
+												src={item.image || "/placeholder.png"}
+												alt={item.translations.ru.name}
+												width={100}
+												height={100}
+											/>
 										</div>
-										<button className={styles.cart__delete} onClick={() => handleRemove(item.id)}>
-											<Trash2 size={16} />
-										</button>
-									</div>
-								</li>
-							))}
+										<div className={styles.cart__info}>
+											<h5 className={styles.cart__name}>{item.translations.ru.name}</h5>
+
+											{number && (
+												<div className={styles.variations__item}>
+													<div className={styles.variations__color} style={{ backgroundColor: hex }}/>
+													<span>{number}</span>
+												</div>
+											)}
+
+											<div className={styles.cart__category}>
+												{item.category?.translations?.ru?.name || "Без категории"}
+											</div>
+										</div>
+
+										<div className={styles.cart__count}>
+											<button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+												<Minus size={16} />
+											</button>
+											<span>{item.quantity}</span>
+											<button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+												<Plus size={16} />
+											</button>
+										</div>
+
+										<div className={styles.cart__right}>
+											<div className={styles.cart__price}>
+												{item.discount_price ? (
+													<>
+														<span className={styles.cart__discount}>{item.discount_price} man</span>
+														<span className={styles.cart__old}>{item.price} man</span>
+													</>
+												) : (
+													<span>{item.price} man</span>
+												)}
+											</div>
+											<button className={styles.cart__delete} onClick={() => handleRemove(item.id, item.selectedVariation)}>
+												<Trash2 size={16} />
+											</button>
+										</div>
+									</li>
+								);
+							})}
+
 						</ul>
 
 						<div className={styles.cart__all}>

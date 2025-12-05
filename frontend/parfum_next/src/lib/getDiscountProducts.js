@@ -6,7 +6,7 @@ export async function getDiscountProducts(limit = 5) {
 	let result = [];
 
 	while (result.length < limit) {
-		const data = await getProducts({ page, pageSize });
+		const data = await getProducts({ page, pageSize, in_stock: true });
 
 		if (!data || data.length === 0) break;
 

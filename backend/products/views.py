@@ -8,37 +8,70 @@ from django_filters.rest_framework import DjangoFilterBackend
 from slugify import slugify
 import json
 from django.utils.translation import gettext_lazy as _
+from .filters import ProductFilter
+from django.db.models import Case, When, F, Value, IntegerField
+
 
 from collections import defaultdict
 
 from .models import Category, Product, Promotion, Brand
-from .serializers import CategorySerializer, ProductSerializer, PromotionSerializer, BrandSerializer
+from .serializers import CategorySerializer, ProductSerializer, PromotionSerializer, BrandSerializer, CategoryTreeSerializer
 from .permissions import IsWarehouseUser
 
 
 class CategoryViewSet(ReadOnlyModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [AllowAny]  # GET разрешен всем
+	queryset = Category.objects.all()
+	serializer_class = CategorySerializer
+	permission_classes = [AllowAny]  # GET разрешен всем
 
+	filter_backends = [DjangoFilterBackend]
+	filterset_fields = ['id', 'slug']  # <-- фильтр по slug
+    
+	
+class CategoryTreeView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk):
+        category = Category.objects.get(pk=pk)
+        data = CategoryTreeSerializer(category).data
+        return Response(data)
+
+   
 
 class ProductViewSet(ModelViewSet):
-	queryset = Product.objects.all()
+	queryset = Product.objects.annotate(
+		real_price=Case(
+			When(discount_price__isnull=False, then=F('discount_price')),
+			default=F('price')
+		),
+		in_stock_order=Case(
+			When(count__gt=0, then=Value(1)),
+			default=Value(0),
+			output_field=IntegerField()
+		)
+	)
 	serializer_class = ProductSerializer
 	filter_backends = [DjangoFilterBackend, OrderingFilter]
-	filterset_fields = {
-		'category': ['exact'],
-		'discount_price': ['isnull'],  # добавляем lookup
-	}
-     
-	ordering_fields = ['created_at']
+	lookup_field = 'slug'	
+	filterset_class = ProductFilter
 
-	ordering = ['-created_at']
+    # Разрешённые сортировки
+	ordering_fields = [
+		'price',
+		'discount_price',
+		'created_at',
+		'real_price',  # умная цена
+		'in_stock_order',
+	]
+
+	ordering = ['-in_stock_order', '-created_at']  # по умолчанию — новые товары
+     
+	 
 
 	def get_permissions(self):
-		if self.action in ["list", "retrieve"]:  # только просмотр
+		if self.action in ["list", "retrieve"]:
 			return [AllowAny()]
-		return [IsWarehouseUser()]  # изменения — только складу
+		return [IsWarehouseUser()]
 
 
 class PromotionViewSet(ReadOnlyModelViewSet):
@@ -56,7 +89,7 @@ class BrandViewSet(ReadOnlyModelViewSet):
 	queryset = Brand.objects.all()
 	serializer_class = BrandSerializer
 	permission_classes = [AllowAny]
-
+	lookup_field = 'slug'
 
 class ProductImportView(APIView):
     permission_classes = [IsAuthenticated]
@@ -68,7 +101,6 @@ class ProductImportView(APIView):
         count = data.get("count")
         price = data.get("price")
         discount_price = data.get("discount_price")
-        variations = data.get("variations", {})
 
         if not barcode or not name or count is None or price is None:
             return Response(
@@ -76,12 +108,6 @@ class ProductImportView(APIView):
                 status=400
             )
 
-        # Если variations пришли как JSON-строка
-        if isinstance(variations, str):
-            try:
-                variations = json.loads(variations)
-            except json.JSONDecodeError:
-                return Response({"error": "Неверный формат поля variations"}, status=400)
 
         # Обрезаем name чтобы не превышал лимит в базе
         name = name[:50]
@@ -108,32 +134,7 @@ class ProductImportView(APIView):
                 product.discount_price = None
                 updated = True
 
-            # Объединяем вариации
-            if variations:
-                current_variations = product.variations or {}
-                merged_variations = defaultdict(list)
-
-                for key, value in current_variations.items():
-                    if isinstance(value, list):
-                        merged_variations[key].extend(value)
-                    else:
-                        merged_variations[key].append(value)
-
-                for key, value in variations.items():
-                    if isinstance(value, list):
-                        merged_variations[key].extend([v for v in value if v not in merged_variations[key]])
-                    else:
-                        if value not in merged_variations[key]:
-                            merged_variations[key].append(value)
-
-                # Преобразуем обратно в обычный dict
-                final_variations = {}
-                for key, values in merged_variations.items():
-                    final_variations[key] = values if len(values) > 1 else values[0]
-
-                if product.variations != final_variations:
-                    product.variations = final_variations
-                    updated = True
+            
 
             # Обновляем slug если есть изменения
             if updated:
@@ -155,7 +156,6 @@ class ProductImportView(APIView):
                 count=count,
                 price=price,
                 discount_price=discount_price,
-                variations=variations
             )
             product.save()
 

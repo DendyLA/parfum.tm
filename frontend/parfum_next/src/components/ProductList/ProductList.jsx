@@ -11,7 +11,7 @@ export default function ProductList({ product = [] }) {
 	return (
 		<ul className={styles.products}>
 			{product.map((product) => (
-				<ProductCard key={product.id} product={product} />
+				<ProductCard key={crypto.randomUUID()} product={product} />
 			))}
 		</ul>
 	);

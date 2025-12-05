@@ -12,11 +12,11 @@ import { getDiscountProducts } from '@/lib/getDiscountProducts'
 
 export default async function Home() {
 	const banners = await getPromotions();
-	const products = await getProducts({ page: 1, pageSize: 5 });
+	const products = await getProducts({ page: 1, pageSize: 5, in_stock: true });
 	const discountProducts = await getDiscountProducts(5);
 
-	const recommended = await getProducts({ pageSize: 5, is_recommended : true });
-	const newProducts = await getProducts({ pageSize: 5, ordering: '-created_at' });
+	const recommended = await getProducts({ pageSize: 5, is_recommended : true, in_stock: true });
+	const newProducts = await getProducts({ pageSize: 5, ordering: '-created_at', in_stock: true });
 	
 	
   return (

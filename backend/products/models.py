@@ -100,10 +100,11 @@ class Product(TranslatableModel):
 	category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Категория", help_text="Выберите категорию товара")
 	brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Бренд", help_text="Выберите бренд товара")
 	price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Цена", help_text="Напишите Цену без скидки")
+	isRecommended = models.BooleanField(default=False, verbose_name="Рекомендуемый товар", help_text="Отметьте, если товар рекомендуется")
 	discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Скидочная цена", help_text='Напишите Скидочную цену')  # акция
 	image = models.ImageField(upload_to="products/%Y/%m/%d/", null=True, blank=True, verbose_name="Фото товара", help_text="Выберите Фото товара")
 	count = models.PositiveIntegerField(default=0, verbose_name="Количество на складе", help_text='Колчиество товаров с склада')  # количество на складе
-	variations = models.JSONField(default=dict, blank=True, help_text='Например: в таком формате {"цвет": "красный", "объем": "50мл"}', verbose_name="Вариации товара")  # цвет, объем и т.д.
+	variations =models.TextField( blank=True, help_text="Введите номера через запятую — 101,102,103", verbose_name="Вариации товара")
 	created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания",null=True, blank=True,)
 	updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления",null=True, blank=True,)
 	slug = models.SlugField(unique=True, blank=True, null=True, verbose_name="Слаг (URL)", help_text="Оставьте это поле пустым!! Оно будет создано автоматически из имени товара")
@@ -112,13 +113,11 @@ class Product(TranslatableModel):
 		verbose_name = "Товар"
 		verbose_name_plural = "Товары"
 
-
-
-
 	def save(self, *args, **kwargs):
         # Если нет pk, сначала сохраняем, чтобы был pk
 		if not self.pk:
 			super().save(*args, **kwargs)
+
 
 		# Генерация уникального slug
 		if not self.slug:
@@ -136,6 +135,19 @@ class Product(TranslatableModel):
 	def __str__(self):
 		return self.safe_translation_getter("name", any_language=True) or 'No name'
 
+
+# Модель для галереи
+class ProductGallery(models.Model):
+	product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="gallery")
+	image = models.ImageField(upload_to="products/gallery/%Y/%m/%d/" , verbose_name="Фото товара", help_text="Выберите Фото для галереи товара")
+	alt_text = models.CharField(max_length=255, blank=True, null=True, verbose_name="Seo текст(необязательно)", help_text="Добавьте Seo текст(необязательно)")
+
+	class Meta:
+		verbose_name = "Фото товара"
+		verbose_name_plural = "Галерея товара"
+
+	def __str__(self):
+		return f"{self.product} - {self.id}"
 
 
 

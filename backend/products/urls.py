@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from .views import CategoryViewSet, ProductViewSet, PromotionViewSet, BrandViewSet, ProductImportView
+from .views import CategoryViewSet, ProductViewSet, PromotionViewSet, BrandViewSet, ProductImportView, CategoryTreeView
 
 router = DefaultRouter()
 router.register("categories", CategoryViewSet)
@@ -14,6 +14,7 @@ router.register("brands", BrandViewSet)
 urlpatterns = [
     path("", include(router.urls)),
 	path("import-product/", ProductImportView.as_view(), name="import-product"),
+	path('categories/<int:pk>/tree/', CategoryTreeView.as_view(), name='category-tree'),
 ]
 
 

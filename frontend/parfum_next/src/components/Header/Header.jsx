@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -13,9 +13,12 @@ import styles from './Header.module.scss';
 
 
 
-
 export default function Header() {
 	const [isCartOpen, setIsCartOpen] = useState(false); 
+	
+	
+	
+
 
 	const handleCartToggle = () => setIsCartOpen(!isCartOpen);
 	const handleCartClose = () => setIsCartOpen(false);
@@ -59,6 +62,7 @@ export default function Header() {
 					</div>
 					<div className={`${styles.header__basket} link-icon`} onClick={handleCartToggle}>
 						<ShoppingBasket size={32} strokeWidth={1} absoluteStrokeWidth />
+						{/* <div className={styles.header__basket_num}>{ cart.length }</div> */}
 					</div>
 				</div>
 

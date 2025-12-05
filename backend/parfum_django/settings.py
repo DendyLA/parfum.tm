@@ -269,14 +269,16 @@ JAZZMIN_SETTINGS = {
     "site_title": "Админ панель",
     "site_header": "Панель Управления",
     "site_brand": "Parfum TM",
-    # "site_logo": "main/icons/favicon.ico",
+    "site_logo": "products/img/logo.svg",  # логотип в шапке
     "welcome_sign": "Добро пожаловать в админку!",
     "copyright": "Parfum TM © 2025",
-    
+	 "site_logo_classes": "",
+
     "search_model": "products.Product",  # модель для глобального поиска
     "topmenu_links": [
-        {"name": "Главная",  "url": "/", "permissions": ["auth.view_user"]},
+        {"name": "Главная",  "url": "http://localhost:3000/", "permissions": ["auth.view_user"]},
         {"name": "Документация", "url": "/docs/swagger/", "new_window": True},
+		{'name': 'Связаться с разработчиком', 'url': 'https://t.me/DendyLA', 'new_window': True},
     ],
     
     "show_sidebar": True,
@@ -290,7 +292,8 @@ JAZZMIN_SETTINGS = {
         'products.Brand': "fas fa-copyright",
         'products.Variation': "fas fa-list",
         'products.Promotion': "fas fa-bullhorn",
-    }
+    },
+	
 	
     
 }
@@ -308,6 +311,7 @@ JAZZMIN_UI_TWEAKS = {
     "modals": "modal-dark",                     # модальные окна в тёмной теме
     "actions_sticky_top": True,                 # панель действий всегда сверху
     "show_ui_builder": True,                    # виджет настройки интерфейса
+	
 }
 
 

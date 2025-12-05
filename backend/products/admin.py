@@ -4,7 +4,7 @@ from parler.admin import TranslatableAdmin
 from django.utils.html import mark_safe
 from .forms import ProductAdminForm
 
-from .models import Category, Product, Promotion, Brand
+from .models import Category, Product, Promotion, Brand, ProductGallery
 
 
 @admin.register(Category)
@@ -27,9 +27,15 @@ class CategoryAdmin(TranslatableAdmin):
     get_full_path.short_description = "Полный путь"
 
 
+#-------------------GalleryProductInline-------------------
+class ProductGalleryInline(admin.TabularInline):
+	model = ProductGallery
+	extra = 3  # сколько дополнительных фото добавить сразу
+	fields = ['image', 'alt_text']
 # ------------------ Product ------------------
 @admin.register(Product)
 class ProductAdmin(TranslatableAdmin):
+    inlines = [ProductGalleryInline]
     form = ProductAdminForm
     list_display = ('id', "barcode", "name", "price", "variations", "discount_price", 'image_preview', "count")
     list_display_links = ("name", "barcode",)
@@ -41,7 +47,7 @@ class ProductAdmin(TranslatableAdmin):
 
     fieldsets = (
         ("Основная информация", {
-            "fields": ("name", "description")
+            "fields": ("name", "description", 'isRecommended')
         }),
         ("Цены и наличие", {
             "fields": ("price", "discount_price", "count")

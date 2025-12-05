@@ -24,10 +24,11 @@ export default  function ProductDetail({ slug }) {
     const [loading, setLoading] = useState(true);
 	const [added, setAdded] = useState(false);
 	const [selectedVariation, setSelectedVariation] = useState(null);
+	
+	
+	
 
-
-
-
+	
 	const variations = product?.variations || [];
 	const variationsArray = typeof variations === "string"
 	? product.variations.split(",").map(item => item.trim())
@@ -38,15 +39,18 @@ export default  function ProductDetail({ slug }) {
 
 	const filteredColors = Object.fromEntries(
 		variationsArray
-			.filter(code => pencilColors[code])   // Оставляем только существующие
+			.filter(code => pencilColors[code])  
 			.map(code => [code, pencilColors[code]])
 	);
 
 
 	const handleAddToCart = () => {
-		addToCart(product);
-		setAdded(true);
-		setTimeout(() => setAdded(false), 1500);
+	addToCart({
+		...product,
+		selectedVariation: selectedVariation, 
+	});
+	setAdded(true);
+	setTimeout(() => setAdded(false), 1500);
 	};
 
     
@@ -82,7 +86,7 @@ export default  function ProductDetail({ slug }) {
         { name: product.translations.ru.name }
     ];
 
-
+	const outOfStock = !product.count || product.count < 1;
 	
     return (
         <div className={styles.product}>
@@ -113,13 +117,14 @@ export default  function ProductDetail({ slug }) {
 					</div>
 					
 					<div className="variations">
-						{Object.keys(filteredColors).length > 0 && (
+						{Object.keys(filteredColors).length > 0 && !outOfStock && (
 							<Variations colors={filteredColors} onSelect={setSelectedVariation}/>
 						)}
 					</div>
-					<div className={`${styles.product__btn} ${disableBuy ? styles.disabled : ''}` }  onClick={!disableBuy ? handleAddToCart : undefined} >{added ? "Добавлено" : "Купить"}</div>
-					{disableBuy && <span className={styles.extra}>Выберит один из вариантов товара</span>}
-					<div className={styles.product__available}>Есть в наличии!</div>
+					<div className={`${styles.product__btn} ${disableBuy ? styles.disabled : ''}` }  onClick={!disableBuy ? handleAddToCart : undefined} >{outOfStock ? "Нет в наличии" : added ? "Добавлено" : "В корзину"}</div>
+					{disableBuy && !outOfStock && <span className={styles.extra}>Выберит один из вариантов товара</span>}
+					{!outOfStock && <div className={styles.product__available}>Есть в наличии!</div>}
+					
 				</div>
             </div>
 			{product.translations.ru.description && (

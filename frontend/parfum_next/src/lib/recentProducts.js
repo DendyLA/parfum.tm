@@ -20,7 +20,8 @@ export function addRecentProduct(product) {
         name: product.translations?.ru?.name ?? "",
         image: product.image,
         price: product.price,
-        discount_price: product.discount_price
+        discount_price: product.discount_price,
+		count: product.count ?? 0
     });
 
     // Ограничиваем 5 шт.
