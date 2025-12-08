@@ -9,9 +9,9 @@ from slugify import slugify
 import json
 from django.utils.translation import gettext_lazy as _
 from .filters import ProductFilter
-from django.db.models import Case, When, F, Value, IntegerField
-
-
+from django.db.models import Case, When, F, Value, IntegerField, Q
+from django.contrib.postgres.search import TrigramSimilarity
+from rest_framework.decorators import api_view
 from collections import defaultdict
 
 from .models import Category, Product, Promotion, Brand
@@ -90,6 +90,7 @@ class BrandViewSet(ReadOnlyModelViewSet):
 	serializer_class = BrandSerializer
 	permission_classes = [AllowAny]
 	lookup_field = 'slug'
+
 
 class ProductImportView(APIView):
     permission_classes = [IsAuthenticated]
@@ -177,3 +178,92 @@ class ProductImportView(APIView):
             {"success": True, "created": created, "product_id": product.id},
             status=200
         )
+    
+
+class GlobalSearchView(APIView):
+    """
+    Универсальный поиск:
+    - ищет среди товаров, брендов, категорий
+    - возвращает top-3 + возможность полного поиска
+    """
+    permission_classes = [AllowAny]
+    def get(self, request):
+        query = request.GET.get("q") or request.GET.get("search", "")
+        query = query.strip()
+
+        limit = int(request.GET.get("limit", 3))  # для попапа
+
+        if not query:
+            return Response({
+                "products": [],
+                "categories": [],
+                "brands": [],
+            })
+
+        # ------- ПОИСК КАТЕГОРИЙ (через Parler) -------
+        categories = Category.objects.filter(
+            translations__name__icontains=query
+        )[:limit]
+
+        # ------- ДЕТИ КАТЕГОРИЙ -------
+        child_categories = Category.objects.none()
+        for cat in categories:
+            child_categories |= cat.children.all()
+        all_categories = (categories | child_categories).distinct()[:limit]
+
+        # ------- ПОИСК БРЕНДОВ (Trigram) -------
+        brands = Brand.objects.annotate(
+            similarity=TrigramSimilarity("name", query)
+        ).filter(similarity__gt=0.05).order_by("-similarity")[:limit]
+
+        # ------- ПОИСК ТОВАРОВ (через Parler) -------
+        products = Product.objects.language(None).filter(
+			Q(translations__name__icontains=query) |
+			Q(slug__icontains=query)
+		).distinct()[:limit]
+
+        return Response({
+            "products": ProductSerializer(products, many=True).data,
+            "categories": CategorySerializer(all_categories, many=True).data,
+            "brands": BrandSerializer(brands, many=True).data,
+        })
+
+
+class GlobalSearchFullView(APIView):
+    """
+    Полный поиск без ограничения
+    """
+    permission_classes = [AllowAny]
+    def get(self, request):
+        query = request.GET.get("q") or request.GET.get("search", "")
+        query = query.strip()
+
+
+        if not query:
+            return Response({
+                "products": [],
+                "categories": [],
+                "brands": [],
+            })
+
+        # ------- ПОИСК КАТЕГОРИЙ -------
+        categories = Category.objects.filter(
+            translations__name__icontains=query
+        ).distinct()
+
+        # ------- ПОИСК БРЕНДОВ -------
+        brands = Brand.objects.annotate(
+            similarity=TrigramSimilarity("name", query)
+        ).filter(similarity__gt=0.05).order_by("-similarity")
+
+        # ------- ПОИСК ТОВАРОВ -------
+        products = Product.objects.language(None).filter(
+			Q(translations__name__icontains=query) |
+			Q(slug__icontains=query)
+		).distinct()
+
+        return Response({
+            "products": ProductSerializer(products, many=True).data,
+            "categories": CategorySerializer(categories, many=True).data,
+            "brands": BrandSerializer(brands, many=True).data,
+        })
