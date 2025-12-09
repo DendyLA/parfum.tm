@@ -46,6 +46,8 @@
 
 			}
 		}
+
+		
 	}
 
 	&__middle{
@@ -53,7 +55,45 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		
 	}
+
+	.search{
+		&__form{
+			display: none;
+			position: absolute;
+			left: 150%;
+			&.active{
+				display: flex;
+			}
+		}
+		&__input{
+			font: $product-desc;
+			border: #dbdbdb solid 1px;
+			padding: .5rem 1.5rem;
+			border-radius: 5px;
+			border-left: none;
+		}
+
+		&__popup{
+			display: none;
+			position: absolute;
+			top: 140%;
+			left: -30%;
+			&.active{
+				display: block;
+			}
+		}
+	}
+
+	&__search{
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 2rem;
+	}
+
+	
 
 }
 

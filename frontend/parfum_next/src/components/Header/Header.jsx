@@ -7,6 +7,8 @@ import { Search, ShoppingBasket } from "lucide-react";
 
 import CategoryMenu from "../CategoryMenu/CategoryMenu";
 import Cart from "../Cart/Cart";
+import SearchPopup from "../Search/SearchPopup";
+import { useSearch } from "@/hooks/useSearch";
 
 import styles from './Header.module.scss';
 
@@ -15,14 +17,12 @@ import styles from './Header.module.scss';
 
 export default function Header() {
 	const [isCartOpen, setIsCartOpen] = useState(false); 
-	
-	
-	
-
+	const { query, setQuery, results, loading } = useSearch();
+	const [active, setActive] = useState(false);
 
 	const handleCartToggle = () => setIsCartOpen(!isCartOpen);
 	const handleCartClose = () => setIsCartOpen(false);
-
+	
 	return (
 		<header className={styles.header}>
 			<div className="container">
@@ -48,13 +48,20 @@ export default function Header() {
 				</div>
 
 				<div className={`${styles.header__middle}`}>
-					<div className={`${styles.header__search}`}>
-						<div className={`${styles.search__btn} link-icon`}>
+					<div className={`${styles.header__search} ${active ? styles.active : ""}`}>
+						<div className={`${styles.search__btn} link-icon`} onClick={() => setActive((prev) => !prev)}>
 							<Search size={32} strokeWidth={1} absoluteStrokeWidth />
 							</div>
-						<form action="" className='search__form'>
-							<input type="text" name="search" id="search" className='search__input' placeholder="Больше 60 000 товаров"/>
-							<label htmlFor="search"></label>
+						<form action="" className={`${styles.search__form} ${active ? `${styles.active} ${'animate-slide-in-left'}`  : ""}`}>
+							<input type="text" value={query}  onChange={(e) => setQuery(e.target.value)} name="search" id="search" className={styles.search__input} placeholder="Больше 60 000 товаров"/>
+							<div className={`${styles.search__popup} ${active ? `${styles.active} ${'animate-slide-in-left'}`  : ""}`}>
+								<SearchPopup
+									query={query}
+									results={results}
+									loading={loading}
+								/>
+							</div>
+							
 						</form>
 					</div>
 					<div className={`${styles.header__logo}`}>

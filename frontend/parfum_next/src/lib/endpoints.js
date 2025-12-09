@@ -157,3 +157,27 @@ export async function getPromotions({ page = 1, pageSize = 10 } = {}) {
 
 	return await apiFetch(`/promotions/?${params.toString()}`);
 }
+
+
+/**
+ * Поиск по товарам, категориям и брендам
+ * query — строка поиска
+ * limit — число результатов для попапа (по умолчанию 3)
+ */
+
+
+export async function searchProducts(query, limit = 3, full = false) {
+    if (!query) return { products: [], categories: [], brands: [] };
+
+    const params = new URLSearchParams();
+    params.append("search", query);
+    if (!full) params.append("limit", limit);
+
+    const data = await apiFetch(`/products/search/?${params.toString()}`);
+
+    return {
+        products: data.products || [],
+        categories: data.categories || [],
+        brands: data.brands || [],
+    };
+}

@@ -1,0 +1,39 @@
+@import '../../styles/variables';
+
+.searchPopup{
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	position: relative;
+	background-color: #ffffff;
+	padding: 1rem 2rem;
+	min-width: 28rem;
+	border: #e5e5e5 1px solid;
+	border-top: none;
+	z-index: 999;
+	box-shadow: 
+		0 4px 6px rgba(0, 0, 0, 0.1),  /* небольшая тень снизу */
+		0 1px 3px rgba(0, 0, 0, 0.08); /* дополнительная легкая тень */
+
+	&__list{
+		display: flex;
+		flex-direction: column;
+		gap: .8rem;
+		font: $product-desc;
+		& li{
+			transition: all .4s;
+			&:hover{
+				opacity: .7;
+			}
+		}
+	}
+	&__all{
+		border-top: #dbdbdb 1px solid;
+		padding: 1rem 0;
+		font: $brand-name;
+		transition: all .4s;
+		&:hover{
+			opacity: .7;
+		}
+	}
+}
