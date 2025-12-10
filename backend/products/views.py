@@ -180,53 +180,72 @@ class ProductImportView(APIView):
         )
     
 
+from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models import Q
+
 class GlobalSearchView(APIView):
-    """
-    Универсальный поиск:
-    - ищет среди товаров, брендов, категорий
-    - возвращает top-3 + возможность полного поиска
-    """
     permission_classes = [AllowAny]
+
     def get(self, request):
         query = request.GET.get("q") or request.GET.get("search", "")
         query = query.strip()
-
-        limit = int(request.GET.get("limit", 3))  # для попапа
+        limit = int(request.GET.get("limit", 3))
 
         if not query:
-            return Response({
-                "products": [],
-                "categories": [],
-                "brands": [],
-            })
+            return Response({"products": [], "categories": [], "brands": []})
 
-        # ------- ПОИСК КАТЕГОРИЙ (через Parler) -------
-        categories = Category.objects.filter(
-            translations__name__icontains=query
-        )[:limit]
+        # ========================
+        #   ПОИСК КАТЕГОРИЙ с Trigram
+        # ========================
+        categories = Category.objects.annotate(
+            similarity=TrigramSimilarity('translations__name', query)
+        ).filter(similarity__gt=0.05).order_by('-similarity')
 
-        # ------- ДЕТИ КАТЕГОРИЙ -------
-        child_categories = Category.objects.none()
-        for cat in categories:
-            child_categories |= cat.children.all()
-        all_categories = (categories | child_categories).distinct()[:limit]
+        # находим родителей
+        parents = categories.filter(parent__isnull=True)
 
-        # ------- ПОИСК БРЕНДОВ (Trigram) -------
+        # если совпал только child — поднимаем parent
+        if not parents.exists():
+            parents = Category.objects.filter(id__in=categories.values("parent"))
+
+        # дети всех найденных родителей
+        children = Category.objects.filter(parent__in=parents)
+
+        # формируем структуру: вложенные дети
+        categories_final = []
+        for parent in parents[:limit]:
+            parent_children = children.filter(parent=parent)[:limit]  # ограничим дочерние
+            parent_data = CategorySerializer(parent).data
+            parent_data["children"] = CategorySerializer(parent_children, many=True).data
+            categories_final.append(parent_data)
+
+        # ========================
+        #   ПОИСК БРЕНДОВ
+        # ========================
         brands = Brand.objects.annotate(
             similarity=TrigramSimilarity("name", query)
-        ).filter(similarity__gt=0.05).order_by("-similarity")[:limit]
+        ).filter(
+            Q(similarity__gt=0.05) |
+            Q(name__icontains=query)
+        ).order_by("-similarity")[:limit]
 
-        # ------- ПОИСК ТОВАРОВ (через Parler) -------
-        products = Product.objects.language(None).filter(
-			Q(translations__name__icontains=query) |
-			Q(slug__icontains=query)
-		).distinct()[:limit]
+        # ========================
+        #   ПОИСК ПРОДУКТОВ
+        # ========================
+        products = Product.objects.language(None).annotate(
+            similarity=TrigramSimilarity('translations__name', query)
+        ).filter(
+            Q(similarity__gt=0.05) |
+            Q(translations__name__icontains=query) |
+            Q(slug__icontains=query)
+        ).distinct()[:limit]
 
         return Response({
             "products": ProductSerializer(products, many=True).data,
-            "categories": CategorySerializer(all_categories, many=True).data,
+            "categories": categories_final,
             "brands": BrandSerializer(brands, many=True).data,
         })
+
 
 
 class GlobalSearchFullView(APIView):
@@ -246,21 +265,26 @@ class GlobalSearchFullView(APIView):
                 "brands": [],
             })
 
-        # ------- ПОИСК КАТЕГОРИЙ -------
-        categories = Category.objects.filter(
-            translations__name__icontains=query
-        ).distinct()
+        # Категории
+        categories = Category.objects.annotate(
+			similarity=TrigramSimilarity("translations__name", query)
+			).filter(
+			Q(similarity__gt=0.05) | Q(translations__name__icontains=query)
+			).distinct().order_by("-similarity")
 
-        # ------- ПОИСК БРЕНДОВ -------
+        # Бренды
         brands = Brand.objects.annotate(
-            similarity=TrigramSimilarity("name", query)
-        ).filter(similarity__gt=0.05).order_by("-similarity")
+			similarity=TrigramSimilarity("name", query)
+			).filter(
+			Q(similarity__gt=0.05) | Q(name__icontains=query)
+			).order_by("-similarity")
 
-        # ------- ПОИСК ТОВАРОВ -------
-        products = Product.objects.language(None).filter(
-			Q(translations__name__icontains=query) |
-			Q(slug__icontains=query)
-		).distinct()
+        # Товары
+        products = Product.objects.language(None).annotate(
+			similarity=TrigramSimilarity("translations__name", query)
+			).filter(
+			Q(similarity__gt=0.05) | Q(translations__name__icontains=query) | Q(slug__icontains=query)
+			).distinct().order_by("-similarity")
 
         return Response({
             "products": ProductSerializer(products, many=True).data,
