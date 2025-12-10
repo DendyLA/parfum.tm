@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -19,9 +19,26 @@ export default function Header() {
 	const [isCartOpen, setIsCartOpen] = useState(false); 
 	const { query, setQuery, results, loading } = useSearch();
 	const [active, setActive] = useState(false);
+	const searchRef = useRef(null);
 
 	const handleCartToggle = () => setIsCartOpen(!isCartOpen);
 	const handleCartClose = () => setIsCartOpen(false);
+
+	// Закрытие попапа при клике вне
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setActive(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Закрытие попапа при клике на ссылку внутри него
+    const handleLinkClick = () => {
+        setActive(false);
+    };
 	
 	return (
 		<header className={styles.header}>
@@ -47,8 +64,8 @@ export default function Header() {
 					</div>
 				</div>
 
-				<div className={`${styles.header__middle}`}>
-					<div className={`${styles.header__search} ${active ? styles.active : ""}`}>
+				<div className={`${styles.header__middle}`} >
+					<div className={`${styles.header__search} ${active ? styles.active : ""}`} ref={searchRef}>
 						<div className={`${styles.search__btn} link-icon`} onClick={() => setActive((prev) => !prev)}>
 							<Search size={32} strokeWidth={1} absoluteStrokeWidth />
 							</div>
@@ -59,6 +76,7 @@ export default function Header() {
 									query={query}
 									results={results}
 									loading={loading}
+									onLinkClick={handleLinkClick}
 								/>
 							</div>
 							

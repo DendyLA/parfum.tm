@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "./SearchPopup.module.scss";
 
-export default function SearchPopup({ query, results, loading, lang = "ru" }) {
+export default function SearchPopup({ query, results, loading, lang = "ru", onLinkClick }) {
     if (!query) return null;
 
     if (loading) return <div className={styles.searchPopup}><p>Загрузка...</p></div>;
@@ -31,7 +31,7 @@ export default function SearchPopup({ query, results, loading, lang = "ru" }) {
                         if (item.type === "product") {
                             return (
                                 <li key={`product-${item.id}`}>
-                                    <Link href={`/products/${item.slug}`}>
+                                    <Link href={`/products/${item.slug}`} onClick={onLinkClick}>
                                         {item.translations?.[lang]?.name || "Без названия"}
                                     </Link>
                                 </li>
@@ -40,7 +40,7 @@ export default function SearchPopup({ query, results, loading, lang = "ru" }) {
                         if (item.type === "category") {
                             return (
                                 <li key={`category-${item.id}`}>
-                                    <Link href={`/categories/${item.slug}`}>
+                                    <Link href={`/categories/${item.slug}`} onClick={onLinkClick}>
                                         {item.translations?.[lang]?.name || "Без названия"}
                                     </Link>
                                 </li>
@@ -49,7 +49,7 @@ export default function SearchPopup({ query, results, loading, lang = "ru" }) {
                         if (item.type === "brand") {
                             return (
                                 <li key={`brand-${item.id}`}>
-                                    <Link href={`/brands/${item.slug}`}>
+                                    <Link href={`/brands/${item.slug}`} onClick={onLinkClick}>
                                         {item.name || "Без названия"}
                                     </Link>
                                 </li>
@@ -61,7 +61,7 @@ export default function SearchPopup({ query, results, loading, lang = "ru" }) {
             )}
 
             {hasResults && (
-                <Link href={`/search?q=${query}`} className={styles.searchPopup__all}>
+                <Link href={`/search?q=${query}`} className={styles.searchPopup__all} onClick={onLinkClick}>
                     Показать все результаты
                 </Link>
             )}
