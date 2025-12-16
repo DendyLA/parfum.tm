@@ -4,89 +4,45 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { searchProducts } from "@/lib/endpoints";
-import Link from "next/link";
+
+import SearchResults from "@/components/SearchResults/SearchResults";
+import RecentViewedClient from "@/components/RecentViewed/RecentViewed";
+
+import styles from './page.module.scss'
 
 export default function SearchPage() {
-    const params = useSearchParams();
-    const query = params.get("q") || "";
-    const lang = "ru"; // язык по умолчанию
+	const params = useSearchParams();
+	const query = params.get("q") || "";
 
-    const [results, setResults] = useState({ products: [], categories: [], brands: [] });
-    const [loading, setLoading] = useState(false);
+	const [results, setResults] = useState({ products: [], categories: [], brands: [] });
+	const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (!query) return;
+	useEffect(() => {
+		if (!query) return;
 
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const data = await searchProducts(query, 1000); // full search
-                setResults(data);
-            } catch (err) {
-                console.error(err);
-                setResults({ products: [], categories: [], brands: [] });
-            } finally {
-                setLoading(false);
-            }
-        };
+		const fetchData = async () => {
+		setLoading(true);
+		try {
+			const data = await searchProducts(query, 1000); // full search
+			setResults(data);
+		} catch (err) {
+			console.error(err);
+			setResults({ products: [], categories: [], brands: [] });
+		} finally {
+			setLoading(false);
+		}
+		};
+		fetchData();
+	}, [query]);
 
-        fetchData();
-    }, [query]);
-
-    return (
-        <div>
-            <h1>Результаты поиска по "{query}"</h1>
-
-            {loading && <p>Загрузка...</p>}
-
-            {!loading && (
-                <>
-                    <section>
-                        <h2>Товары</h2>
-                        {results.products.length > 0 ? (
-                            <ul>
-                                {results.products.map(p => (
-                                    <li key={p.id}>
-                                        <Link href={`/product/${p.slug}`}>
-                                            {p.translations?.[lang]?.name || "Без названия"}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : <p>Нет товаров</p>}
-                    </section>
-
-                    <section>
-                        <h2>Категории</h2>
-                        {results.categories.length > 0 ? (
-                            <ul>
-                                {results.categories.map(c => (
-                                    <li key={c.id}>
-                                        <Link href={`/category/${c.slug}`}>
-                                            {c.translations?.[lang]?.name || "Без названия"}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : <p>Нет категорий</p>}
-                    </section>
-
-                    <section>
-                        <h2>Бренды</h2>
-                        {results.brands.length > 0 ? (
-                            <ul>
-                                {results.brands.map(b => (
-                                    <li key={b.id}>
-                                        <Link href={`/brand/${b.slug}`}>
-                                            {b.name || "Без названия"}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : <p>Нет брендов</p>}
-                    </section>
-                </>
-            )}
-        </div>
-    );
+	return (
+		<div className={styles.search}>
+			<div className={`${styles.search__box} container`}>
+				<h1 className={styles.search__title}>Результаты поиска по "{query}"</h1>
+				<SearchResults results={results} loading={loading} />
+				
+			</div>
+			<RecentViewedClient/>
+		</div>
+	);
 }

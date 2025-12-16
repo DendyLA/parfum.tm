@@ -4,78 +4,102 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import styles from "./InfinityProductsList.module.scss";
 import { getProductsByBrand } from "@/lib/endpoints";
-import { Skeleton } from "@mui/material";
 import SkeletonList from "../SkeletonList/SkeletonList";
-
 
 export default function ProductsByBrand({ brandId, filters = {} }) {
     const [products, setProducts] = useState([]);
-    const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-    const loaderRef = useRef(null);
 
-    // Сброс состояния при смене бренда или фильтров
+    const loaderRef = useRef(null);
+    const pageRef = useRef(1);
+    const initializedRef = useRef(false);
+    const requestIdRef = useRef(0);
+	const filtersKey = JSON.stringify(filters);
+
+    // ============================
+    // СБРОС ПРИ СМЕНЕ БРЕНДА / ФИЛЬТРОВ
+    // ============================
     useEffect(() => {
         if (!brandId) return;
+
+        pageRef.current = 1;
+        requestIdRef.current++;
+        initializedRef.current = false;
+
         setProducts([]);
-        setPage(1);
         setHasMore(true);
-    }, [brandId, filters]);
+    }, [brandId, filtersKey]);
 
-    // Загрузка следующей порции товаров
+    // ============================
+    // ЗАГРУЗКА
+    // ============================
     const loadMore = useCallback(async () => {
-        if (loading || !hasMore || !brandId) return;
+        if (!brandId || loading || !hasMore) return;
 
+        const currentRequestId = ++requestIdRef.current;
         setLoading(true);
 
         try {
             const data = await getProductsByBrand({
                 brandId,
-                page,
+                page: pageRef.current,
                 pageSize: 5,
                 ...filters
             });
 
-            // Поддержка API с results или просто массивом
-            const items = Array.isArray(data.results) ? data.results : data ?? [];
+            if (currentRequestId !== requestIdRef.current) return;
 
-            if (items.length > 0) {
-                setProducts(prev => {
-                    const newItems = items.filter(
-                        item => !prev.some(p => p.id === item.id)
-                    );
-                    return [...prev, ...newItems];
-                });
-                setPage(prev => prev + 1);
-            } else {
+            const items = Array.isArray(data?.results)
+                ? data.results
+                : Array.isArray(data)
+                ? data
+                : [];
+
+            if (items.length === 0) {
                 setHasMore(false);
+                return;
             }
-        } catch (err) {
-            console.error("Ошибка загрузки товаров:", err);
+
+            setProducts(prev => [...prev, ...items]);
+            pageRef.current += 1;
+            initializedRef.current = true;
+        } catch (e) {
+            console.error("Ошибка загрузки товаров:", e);
             setHasMore(false);
         } finally {
-            setLoading(false);
+            if (currentRequestId === requestIdRef.current) {
+                setLoading(false);
+            }
         }
-    }, [brandId, page, filters, loading, hasMore]);
+    }, [brandId, filtersKey, loading, hasMore]);
 
-    // Intersection Observer для бесконечного скролла
+    // ============================
+    // 🔥 ПЕРВАЯ ЗАГРУЗКА — ЯВНО
+    // ============================
     useEffect(() => {
+        if (!brandId) return;
+        loadMore();
+    }, [brandId, filtersKey, loadMore]);
+
+    // ============================
+    // INFINITE SCROLL (ТОЛЬКО ПОСЛЕ ПЕРВОЙ ЗАГРУЗКИ)
+    // ============================
+    useEffect(() => {
+        if (!loaderRef.current || !initializedRef.current) return;
+
         const observer = new IntersectionObserver(
             entries => {
-                if (entries[0].isIntersecting && hasMore && !loading) {
+                if (entries[0].isIntersecting) {
                     loadMore();
                 }
             },
             { threshold: 0.1 }
         );
 
-        if (loaderRef.current) observer.observe(loaderRef.current);
-
-        return () => {
-            if (loaderRef.current) observer.unobserve(loaderRef.current);
-        };
-    }, [loadMore, hasMore, loading]);
+        observer.observe(loaderRef.current);
+        return () => observer.disconnect();
+    }, [loadMore]);
 
     return (
         <>
@@ -83,12 +107,11 @@ export default function ProductsByBrand({ brandId, filters = {} }) {
                 {products.map(product => (
                     <ProductCard key={product.id} product={product} />
                 ))}
-                <div ref={loaderRef} style={{ height: "20px" }} />
             </ul>
 
-            {loading && (
-                 <SkeletonList count={5} />
-            )}
+            {hasMore && <div ref={loaderRef} style={{ height: 20 }} />}
+
+            {loading && <SkeletonList count={5} />}
 
             {!hasMore && products.length > 0 && (
                 <p className={styles.products__info}>Больше товаров нет</p>

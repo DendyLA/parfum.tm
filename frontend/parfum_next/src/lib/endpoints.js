@@ -11,7 +11,7 @@ export async function getProducts({
 	max_price,
 	has_discount,
 	ordering,
-	is_recommended = false,
+	is_recommended,
 	in_stock, // <- новый параметр для фильтрации по count
 	} = {}) {
 	const params = new URLSearchParams();
@@ -181,3 +181,36 @@ export async function searchProducts(query, limit = 3, full = false) {
         brands: data.brands || [],
     };
 }
+
+
+
+
+export async function createOrder({
+	first_name,
+	last_name,
+	phone,
+	comment = "",
+	items = [],
+	total_price,
+}) {
+	if (!first_name || !last_name || !phone) {
+		throw new Error("Имя, фамилия и телефон обязательны");
+	}
+
+	if (!items.length) {
+		throw new Error("Корзина пуста");
+	}
+
+	return await apiFetch("/orders/", {
+		method: "POST",
+		body: JSON.stringify({
+			first_name,
+			last_name,
+			phone,
+			comment,
+			items,
+			total_price,
+		}),
+	});
+}
+

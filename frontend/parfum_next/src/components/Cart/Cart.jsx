@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { X, Trash2, Plus, Minus } from "lucide-react";
 import styles from './Cart.module.scss';
@@ -21,25 +22,33 @@ export default function Cart({ onClose }) {
 	}, []);
 
 	useEffect(() => {
+		
 		setCart(getCart());
 	}, []);
 
-	const updateQuantity = (id, newQty) => {
+	const updateQuantity = (id, selectedVariation, newQty) => {
 		if (newQty <= 0) {
-			handleRemove(id);
+			handleRemove(id, selectedVariation);
 			return;
 		}
 		const updated = cart.map(item =>
-			item.id === id ? { ...item, quantity: newQty } : item
+			item.id === id && item.selectedVariation === selectedVariation
+				? { ...item, quantity: newQty }
+				: item
 		);
 		saveCart(updated);
 		setCart(updated);
 	};
 
+
 	const handleRemove = (id, selectedVariation) => {
-		const updated = removeFromCart(id, selectedVariation);
+		const updated = cart.filter(
+			item => !(item.id === id && item.selectedVariation === selectedVariation)
+		);
+		saveCart(updated);
 		setCart(updated);
 	};
+
 
 	const totalPrice = cart.reduce((sum, item) => {
 		const price = item.discount_price ?? item.price;
@@ -49,7 +58,7 @@ export default function Cart({ onClose }) {
 	const handleBackgroundClick = (e) => {
 		if (e.target === e.currentTarget) onClose();
 	};
-
+	
 	return (
 		<div className={styles.cart} onClick={handleBackgroundClick}>
 			<div className={styles.cart__wrapper}>
@@ -69,7 +78,7 @@ export default function Cart({ onClose }) {
 								const hex = number ? pencilColors[number] : null;
 
 								return (
-									<li key={`${item.id}-${item.variation}`} className={styles.cart__item}>
+									<li key={`${item.id}-${item.selectedVariation}`} className={styles.cart__item}>
 										<div className={styles.cart__image}>
 											<Image
 												src={item.image || "/placeholder.png"}
@@ -94,11 +103,11 @@ export default function Cart({ onClose }) {
 										</div>
 
 										<div className={styles.cart__count}>
-											<button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+											<button onClick={() => updateQuantity(item.id, item.selectedVariation, item.quantity - 1)}>
 												<Minus size={16} />
 											</button>
 											<span>{item.quantity}</span>
-											<button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+											<button onClick={() => updateQuantity(item.id, item.selectedVariation, item.quantity + 1)}>
 												<Plus size={16} />
 											</button>
 										</div>
@@ -128,9 +137,11 @@ export default function Cart({ onClose }) {
 							<div className={styles.cart__total}>
 								Общая сумма: <strong>{totalPrice.toFixed(2)} man</strong>
 							</div>
-							<button className={styles.cart__submit}>
-								Оформить заказ
-							</button>
+							<Link href='/order'>
+								<button className={styles.cart__submit}>
+									Оформить заказ
+								</button>
+							</Link>
 						</div>
 					</div>
 				)}

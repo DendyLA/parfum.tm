@@ -69,6 +69,7 @@ export default function ProductsByCategory({ categoryId, filters = {} }) {
                     const newItems = data.filter(item => !prev.some(p => p.id === item.id));
                     return [...prev, ...newItems];
                 });
+				
 
                 // Увеличиваем страницу
                 setQueue(prev => {

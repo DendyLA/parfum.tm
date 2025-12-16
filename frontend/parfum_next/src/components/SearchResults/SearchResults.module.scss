@@ -1,0 +1,33 @@
+@import '../../styles/variables';
+
+.search{
+	margin-top: 4rem;
+	&__box{
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+	&__wrapper{
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin-top: 3rem;
+		ul{
+			display: flex;
+			flex-wrap: wrap;
+			gap: 2rem;
+			// margin-top: 4rem;
+			a{
+				text-transform: capitalize;
+				transition: all .4s;
+				font: $product-desc;
+				&:hover{
+					opacity: .7;
+				}	
+			}
+			li{
+				margin-top: 4rem;
+			}
+		}
+	}
+}

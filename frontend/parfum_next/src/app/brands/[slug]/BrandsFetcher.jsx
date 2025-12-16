@@ -49,7 +49,7 @@ export default function BrandsFetcher({ slug }) {
             <ProductFilters key={brand.id} values={filters} onChange={setFilters} />
 
             {/* brandId теперь корректно обновляется */}
-            <ProductsByBrand brandId={brand.id} filters={filters} />
+            <ProductsByBrand   brandId={brand.id} filters={filters} />
         </>
     );
 }

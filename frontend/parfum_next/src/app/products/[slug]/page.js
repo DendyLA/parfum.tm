@@ -4,7 +4,7 @@ import ProductDetail from "@/components/ProductDetail/ProductDetail";
 import { getProducts } from "@/lib/endpoints";
 
 import ProductSection from "@/components/ProductSection/ProductSection";
-import RecentViewedClient from "../RecentViewed";
+import RecentViewedClient from "@/components/RecentViewed/RecentViewed";
 
 
 export default async function ProductPage({ params }) {
