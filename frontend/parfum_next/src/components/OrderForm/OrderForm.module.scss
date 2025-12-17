@@ -1,0 +1,45 @@
+@import '../../styles/variables';
+
+.form{
+	margin-top: 5rem;
+	display: flex;
+	flex-direction: column;
+	// justify-content: center;	
+	gap: 6rem;
+	&__box{
+		display: flex;
+		// justify-content: center;	
+		gap: 6rem;
+	}
+	&__wrapper{
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+	}
+
+	&__input{
+		max-width: 300px;
+		position: relative;
+		border-bottom: 1px solid #212121;
+		padding: 10px 10px 10px 0;
+	}
+	&__submit{
+		color: #fff;
+		background-color: #212121;
+		border: 1px solid #212121;
+		justify-content: center;
+		align-items: center;
+		margin-top: 2rem;
+		padding: .6rem 3rem;
+		height: 60px;
+		max-width: 220px;
+		font: 600 1.6rem / 100% Fixel, sans-serif;
+		transition: all .4s;
+		display: flex;
+		&:hover {
+			color: #212121;
+			background-color: #fff;
+		}
+	}
+
+}

@@ -94,7 +94,7 @@ export default function Header() {
 				<CategoryMenu/>
 			</div>
 			{/* Корзина */}
-			{isCartOpen && <Cart onClose={handleCartClose} />}
+			{isCartOpen && <Cart onClose={handleCartClose}/>} 
 		</header>
 	)
 

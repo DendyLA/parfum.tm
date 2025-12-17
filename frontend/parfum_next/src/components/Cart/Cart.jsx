@@ -9,7 +9,7 @@ import { getCart, saveCart, removeFromCart, clearCart } from "@/lib/addToCart";
 
 import { pencilColors } from "@/constants/pencilColors";
 
-export default function Cart({ onClose }) {
+export default function Cart({ onClose, setActive }) {
 	const [cart, setCart] = useState([]);
 
 
@@ -138,7 +138,7 @@ export default function Cart({ onClose }) {
 								Общая сумма: <strong>{totalPrice.toFixed(2)} man</strong>
 							</div>
 							<Link href='/order'>
-								<button className={styles.cart__submit}>
+								<button className={styles.cart__submit} onClick={onClose}>
 									Оформить заказ
 								</button>
 							</Link>

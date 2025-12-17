@@ -27,7 +27,7 @@ export default function Header() {
 					<h4 className={styles.footer__title}>Узнавайте первыми о распродажах и новинках!</h4>
 					<div className={styles.footer__wrapper}>
 						<div className={styles.footer__input} id="email-field">
-							<input className={`input`} type="text" name="email" id="footer-subscribe-email" required="" placeholder="Электронная почта" 
+							<input className={`input`} type="text" name="email" id="footer-subscribe-email" required placeholder="Электронная почта" 
 							{...register("email", {
 							required: "Email обязателен",
 							pattern: {

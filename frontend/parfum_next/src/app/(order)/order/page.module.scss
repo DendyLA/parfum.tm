@@ -1,0 +1,34 @@
+@import '../../../styles/variables';
+
+.order{
+
+	&__header{
+		padding: 4rem 0;
+		
+	}
+	&__wrapper{
+		display: flex;
+		align-items: center;
+
+	}
+	&__box{
+		display: flex;
+		gap: 2rem;
+		margin-top: 6rem;
+	}
+	
+	&__link {
+		display: flex;
+		gap: 1rem;
+	}
+
+	&__image {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	&__item:nth-child(1){
+		width: 60%;
+	}
+}
