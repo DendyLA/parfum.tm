@@ -49,6 +49,8 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+	"nested_admin", 
+	'django_filters',
     # UI            # зависимость admin-interface
     "import_export",
     "ckeditor",
@@ -292,6 +294,8 @@ JAZZMIN_SETTINGS = {
         'products.Brand': "fas fa-copyright",
         'products.Variation': "fas fa-list",
         'products.Promotion': "fas fa-bullhorn",
+		'products.OrderItem': "fa-solid fa-cash-register",
+		'products.Order' : 'fa-solid fa-user',
     },
 	
 	

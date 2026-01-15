@@ -11,19 +11,17 @@ import "swiper/css/free-mode";
 
 
 import useFancybox from "@/hooks/useFancybox";
-
-export default function ProductGallery({ images }) {
+export default function ProductGallery({ images = [] }) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [fancyboxRef] = useFancybox();
+
+    if (!images.length) return null;
 
     return (
         <div className='gallery'>
             {/* Главное фото */}
             <div ref={fancyboxRef} style={{ textAlign: "center" }}>
-                <a
-                    data-fancybox
-                    href={images[activeIndex]}   // 👉 Fancybox показывает только текущее фото
-                >
+                <a data-fancybox href={images[activeIndex]}>
                     <Image
                         src={images[activeIndex]}
                         alt="Main product image"
@@ -40,14 +38,14 @@ export default function ProductGallery({ images }) {
 
             {/* Мини-карусель */}
             <Swiper
-                slidesPerView={images.length > 5 ? 5 : images.length}
+                slidesPerView={Math.min(images.length, 5)}
                 spaceBetween={10}
                 freeMode
                 modules={[FreeMode]}
                 style={{ marginTop: 20 }}
             >
                 {images.map((img, index) => (
-                    <SwiperSlide key={index}>
+                    <SwiperSlide key={img}>
                         <div
                             onClick={() => setActiveIndex(index)}
                             style={{
@@ -57,7 +55,6 @@ export default function ProductGallery({ images }) {
                                         ? "2px solid #000"
                                         : "1px solid #ccc",
                                 borderRadius: 8,
-                                width: 'auto',
                             }}
                         >
                             <Image

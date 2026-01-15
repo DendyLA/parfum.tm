@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from "react";
 import { useState } from "react";
@@ -10,41 +10,48 @@ import MenuItem from "@mui/material/MenuItem";
 
 import styles from "./Variations.module.scss";
 
-export default function Variations({ colors, onSelect }) {
-	const [value, setValue] = useState("");
+/**
+ * @param {Array} variations - массив объектов вариаций DRF
+ * @param {Object} selected - выбранная вариация
+ * @param {Function} onSelect - callback при выборе вариации
+ */
+export default function Variations({ variations = [], selected, onSelect }) {
+    const [value, setValue] = useState(selected?.id || "");
 
-	const handleChange = (event) => {
-		const val = event.target.value.toString();
-		setValue(val);
-		if (onSelect) onSelect(val);
-	};
+    const handleChange = (event) => {
+        const val = event.target.value;
+        setValue(val);
+        const variationObj = variations.find(v => v.id.toString() === val);
+        if (onSelect) onSelect(variationObj);
+    };
 
+    if (!variations || !variations.length) return null;
 
-	
-	if (!colors || typeof colors !== "object") return null;
+    return (
+        <FormControl fullWidth className={styles.variations}>
+            <InputLabel id="variation-select-label">Выберите вариант</InputLabel>
 
-  	const numbers = Object.keys(colors);
-
-	return (
-		<FormControl fullWidth className={styles.variations}>
-			<InputLabel id="color-select-label" >Выберите вариант</InputLabel>
-
-			<Select
-				labelId="color-select-label"
-				id="color-select"
-				value={value}
-				label="Выберите вариант"
-				onChange={handleChange}
-			>
-				{numbers.map((num) => (
-				<MenuItem key={num} value={num.toString()}>
-					<div className={styles.variations__item}>
-						<div className={styles.variations__color} style={{ backgroundColor: colors[num] }}></div>
-						<span>{num}</span>
-					</div>
-				</MenuItem>
-				))}
-			</Select>
-		</FormControl>
-	);
+            <Select
+                labelId="variation-select-label"
+                id="variation-select"
+                value={value}
+                label="Выберите вариант"
+                onChange={handleChange}
+            >
+                {variations.map(v => (
+                    <MenuItem key={v.id} value={v.id.toString()}>
+                        <div className={styles.variations__item}>
+                            {v.color_hex && (
+                                <div
+                                    className={styles.variations__color}
+                                    style={{ backgroundColor: v.color_hex }}
+                                ></div>
+                            )}
+                            <span>{v.value}</span>
+                        </div>
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+    );
 }

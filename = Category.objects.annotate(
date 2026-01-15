@@ -1,0 +1,209 @@
+[33mcommit 0ca8e8f55ba595773d87076e857609528f14a611[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Wed Dec 10 17:26:20 2025 +0500
+
+    adding the search api fix
+
+[33mcommit 2a58c8b4f14a4444442a1d4a98a710c4cb5d05d9[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Wed Dec 10 17:26:08 2025 +0500
+
+    adding the search api fix
+
+[33mcommit 8d9296938029a1010915e557cd7343b0fdc2e070[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Tue Dec 9 17:46:48 2025 +0500
+
+    add the search component and stylize it
+
+[33mcommit f85b875e70e5e0784f6d64906974c5069fb54abc[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Dec 8 17:50:10 2025 +0500
+
+    add the search api and the component
+
+[33mcommit 7d30cc1ef95d23c300309ecd84a2888b47fdea0c[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Fri Dec 5 18:45:21 2025 +0500
+
+    add the filter of count and fix the productDetailed
+
+[33mcommit 8e0769f6cdfeb423b87dc80ae8d8d0da46a972a5[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Thu Dec 4 17:48:40 2025 +0500
+
+    add the variations component
+
+[33mcommit 98e525442e9880dcb4ddb4af7eda410a23ad04a3[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Wed Dec 3 17:59:49 2025 +0500
+
+    Add the variations module
+
+[33mcommit 10286f7ba38fd93b0c4bb7f95fdbd4d2f9b77594[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Tue Dec 2 17:43:50 2025 +0500
+
+    add the product about in the product detail page
+
+[33mcommit f83aaa666e1d727cced2e1de880792232014c5bc[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Dec 1 17:48:13 2025 +0500
+
+    add the product-deatil page
+
+[33mcommit d919ea3f3475c95e0ac5c850bac23f3897e30a37[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Fri Nov 28 17:44:40 2025 +0500
+
+    add the Product Category and Brands component and page
+
+[33mcommit 9d524e33b1fe71fe10677f1bce5ddd8d013ad631[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Tue Nov 25 17:55:18 2025 +0500
+
+    add the category page
+
+[33mcommit d7613de2c4f446c89c8a17a2df355774864ff91b[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Thu Nov 20 17:54:21 2025 +0500
+
+    add the category page
+
+[33mcommit 633e4552636d265c144811675093e8871e671267[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Nov 17 17:45:49 2025 +0500
+
+    add the brands component
+
+[33mcommit cb06573fb4a26b64b2f6b71837cedc9e94d7694c[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Nov 17 09:22:00 2025 +0500
+
+    add the main page components
+
+[33mcommit a1be10761c871c3e94e35f9cc799c37af9f55abc[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Nov 10 18:07:12 2025 +0500
+
+    add the api filter and product lsit
+
+[33mcommit 74c6dc2f6e748c51a064a3292d8ff90b8a5f597b[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Fri Nov 7 17:59:08 2025 +0500
+
+    add the company section
+
+[33mcommit 04a707d363e563dcd6dcb2db1b4cad27801c137e[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Fri Nov 7 14:52:31 2025 +0500
+
+    add the skelton to the banners and product cards
+
+[33mcommit adc03c996f5c86a1b33adee055b801722fc9322f[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Thu Nov 6 17:49:22 2025 +0500
+
+    add the product card
+
+[33mcommit edb3331ed21e81750171685d0253c59f131bb9c9[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Tue Oct 28 15:30:00 2025 +0500
+
+    fix the input
+
+[33mcommit a6e4ffc183d326247118f4e9433b76564cfd2f57[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Tue Oct 28 15:28:27 2025 +0500
+
+    add the footer
+
+[33mcommit 40b6559cbd9955d734ee9b1414e0184c465d84a4[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 27 17:57:14 2025 +0500
+
+    add the favicons
+
+[33mcommit 77137242d27f9dde443c18d50898c6df5ca3ae86[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 27 17:47:29 2025 +0500
+
+    add the header block
+
+[33mcommit cae6b255669f9569357eaeffc91a6d2069f704c5[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 27 17:46:16 2025 +0500
+
+    add the header block
+
+[33mcommit 6be1b8d299dc20d784f468ecf5dbb3e7991563df[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 20 18:02:50 2025 +0500
+
+    add the header__top
+
+[33mcommit 960386baddd23c258ff4f42809be956d228d6f8d[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 20 17:53:02 2025 +0500
+
+    add the header__top
+
+[33mcommit d4490a326fdfdb50dc0d23ffb83d7b78874c4fe8[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 20 17:44:57 2025 +0500
+
+    add the header__top
+
+[33mcommit d8a33e8880b6b9a5788e3d4929b7ec909bb30e01[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 20 16:34:30 2025 +0500
+
+    adding the global styles and fix api problex with pk
+
+[33mcommit 296f64d6376dc20a09325725a2031e92ef12e4ae[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 13 17:58:43 2025 +0500
+
+    init the next app
+
+[33mcommit a77a01a5d4c4b5362d9a11c35fdc8980dec81be2[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Mon Oct 13 17:55:20 2025 +0500
+
+    init the next app
+
+[33mcommit 2044bdd5767e390ff0d6ff5ca7d3e11c6ed3d939[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Fri Oct 10 17:53:36 2025 +0500
+
+    add the folder
+
+[33mcommit c02e97d8433931445a05d1bf7414eb0a8eaf795f[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Fri Oct 10 17:52:14 2025 +0500
+
+    delete the fronteedn and init new one
+
+[33mcommit a833f38ae492ec62ce975330251c926de449a5ac[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Thu Oct 9 12:54:52 2025 +0500
+
+    add count to the admin list
+
+[33mcommit 71f74ad63d23955cb27d3b04563075d3acabbbe2[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Thu Oct 9 12:26:58 2025 +0500
+
+    add the product api
+
+[33mcommit 21a283189ba776bfe55fb7dd2b3e581ccae75e22[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Fri Oct 3 18:01:12 2025 +0500
+
+    adding the products
+
+[33mcommit 3faae4c49132640ead393b2bb476be932a7945db[m
+Author: Dawa <atayewdawlet@gmail.com>
+Date:   Fri Oct 3 17:47:48 2025 +0500
+
+    adding the products api

@@ -1,5 +1,6 @@
 from django_filters import rest_framework as filters
 from .models import Product
+from django_filters.rest_framework import FilterSet, OrderingFilter
 from django.db.models import Case, When, F, DecimalField
 
 class ProductFilter(filters.FilterSet):
@@ -8,6 +9,7 @@ class ProductFilter(filters.FilterSet):
 	has_discount = filters.BooleanFilter(method='filter_has_discount')
 	is_recommended = filters.BooleanFilter(field_name='isRecommended')
 	in_stock = filters.BooleanFilter(method='filter_in_stock')
+
 
 	class Meta:
 		model = Product
@@ -19,9 +21,11 @@ class ProductFilter(filters.FilterSet):
 			effective_price=Case(
 				When(discount_price__isnull=False, then=F('discount_price')),
 				default=F('price'),
-				output_field=DecimalField()
+				output_field=DecimalField(max_digits=10, decimal_places=2)  # те же значения
 			)
 		)
+
+
 
 	def filter_min_price(self, queryset, name, value):
 		queryset = self.annotate_effective_price(queryset)

@@ -10,8 +10,8 @@ export default function ProductList({ product = [] }) {
 	
 	return (
 		<ul className={styles.products}>
-			{product.map((product) => (
-				<ProductCard key={crypto.randomUUID()} product={product} />
+			{product.map((product, index) => (
+				<ProductCard key={index} product={product} />
 			))}
 		</ul>
 	);

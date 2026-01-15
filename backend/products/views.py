@@ -9,13 +9,13 @@ from slugify import slugify
 import json
 from django.utils.translation import gettext_lazy as _
 from .filters import ProductFilter
-from django.db.models import Case, When, F, Value, IntegerField, Q
+from django.db.models import Case, When, F, Value, IntegerField, Q, DecimalField
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework.decorators import api_view
 from collections import defaultdict
 
-from .models import Category, Product, Promotion, Brand
-from .serializers import CategorySerializer, ProductSerializer, PromotionSerializer, BrandSerializer, CategoryTreeSerializer
+from .models import Category, Product, Promotion, Brand, Order, OrderItem
+from .serializers import CategorySerializer, ProductSerializer, PromotionSerializer, BrandSerializer, CategoryTreeSerializer, OrderCreateSerializer
 from .permissions import IsWarehouseUser
 
 
@@ -64,8 +64,24 @@ class ProductViewSet(ModelViewSet):
 		'in_stock_order',
 	]
 
-	ordering = ['-in_stock_order', '-created_at']  # по умолчанию — новые товары
+	ordering = ['-in_stock_order', 'created_at']  # по умолчанию — старые товары
      
+	def get_queryset(self):
+		queryset = Product.objects.all()
+		
+		queryset = queryset.annotate(
+			real_price=Case(
+				When(discount_price__isnull=False, then=F('discount_price')),
+				default=F('price'),
+				output_field=DecimalField(max_digits=10, decimal_places=2)  # подставь реальные значения из модели!
+			),
+			in_stock_order=Case(
+				When(count__gt=0, then=Value(1)),
+				default=Value(0),
+				output_field=IntegerField()
+			)
+		)
+		return queryset
 	 
 
 	def get_permissions(self):
@@ -241,10 +257,20 @@ class GlobalSearchView(APIView):
         ).distinct()[:limit]
 
         return Response({
-            "products": ProductSerializer(products, many=True).data,
-            "categories": categories_final,
-            "brands": BrandSerializer(brands, many=True).data,
-        })
+			"products": ProductSerializer(
+				products,
+				many=True,
+				context={"request": request}
+			).data,
+
+			"categories": categories_final,
+
+			"brands": BrandSerializer(
+				brands,
+				many=True,
+				context={"request": request}
+			).data,
+		})
 
 
 
@@ -291,3 +317,41 @@ class GlobalSearchFullView(APIView):
             "categories": CategorySerializer(categories, many=True).data,
             "brands": BrandSerializer(brands, many=True).data,
         })
+
+
+
+
+class CreateOrderView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = OrderCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        order = Order.objects.create(
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+            phone=data["phone"],
+            comment=data.get("comment"),
+            total_price=data["total_price"],
+        )
+
+        for item in data["items"]:
+            product = Product.objects.get(id=item["product_id"])
+
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                product_name=product.safe_translation_getter("name", any_language=True),
+                product_image=product.image,
+                barcode=product.barcode,
+                variation=item.get("variation"),
+                quantity=item["quantity"],
+                price=product.discount_price or product.price
+            )
+
+        return Response(
+            {"success": True, "order_id": order.id},
+            status=status.HTTP_201_CREATED
+        )

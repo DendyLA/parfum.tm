@@ -104,7 +104,6 @@ class Product(TranslatableModel):
 	discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Скидочная цена", help_text='Напишите Скидочную цену')  # акция
 	image = models.ImageField(upload_to="products/%Y/%m/%d/", null=True, blank=True, verbose_name="Фото товара", help_text="Выберите Фото товара")
 	count = models.PositiveIntegerField(default=0, verbose_name="Количество на складе", help_text='Колчиество товаров с склада')  # количество на складе
-	variations =models.TextField( blank=True, help_text="Введите номера через запятую — 101,102,103", verbose_name="Вариации товара")
 	created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания",null=True, blank=True,)
 	updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления",null=True, blank=True,)
 	slug = models.SlugField(unique=True, blank=True, null=True, verbose_name="Слаг (URL)", help_text="Оставьте это поле пустым!! Оно будет создано автоматически из имени товара")
@@ -168,3 +167,145 @@ class Promotion(TranslatableModel):
         return self.safe_translation_getter("title", any_language=True) or 'No name'
 
 
+
+class VariationType(models.Model):
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+        help_text="color, scent, size"
+    )
+    name = models.CharField(
+        max_length=100,
+        verbose_name="Название"
+    )
+
+    class Meta:
+        verbose_name = "Тип вариации"
+        verbose_name_plural = "Типы вариаций"
+
+    def __str__(self):
+        return self.name
+
+
+class ProductVariation(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="variations"
+    )
+
+    variation_type = models.ForeignKey(
+        VariationType,
+        on_delete=models.CASCADE,
+        related_name="variations"
+    )
+
+    value = models.CharField(
+        max_length=100,
+        verbose_name="Значение вариации"
+    )
+
+    color_hex = models.CharField(
+        max_length=7,
+        blank=True,
+        null=True,
+        help_text="Для цветов #FFFFFF"
+    )
+
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("product", "variation_type", "value")
+        verbose_name = "Вариация товара"
+        verbose_name_plural = "Вариации товара"
+
+    def __str__(self):
+        return f"{self.product} — {self.value}"
+
+
+class ProductVariationImage(models.Model):
+    variation = models.ForeignKey(
+        ProductVariation,
+        on_delete=models.CASCADE,
+        related_name="gallery"
+    )
+
+    image = models.ImageField(
+        upload_to="products/variations/%Y/%m/%d/"
+    )
+
+    alt_text = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+        verbose_name = "Фото вариации"
+        verbose_name_plural = "Галерея вариации"
+
+    def __str__(self):
+        return f"{self.variation}"
+
+
+
+#Order
+class Order(models.Model):
+    first_name = models.CharField(max_length=100, verbose_name="Имя")
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+    phone = models.CharField(max_length=30, verbose_name="Телефон")
+    comment = models.TextField(blank=True, null=True, verbose_name="Комментарий")
+
+    total_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Общая сумма"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+
+    def __str__(self):
+        return f"Заказ #{self.id} — {self.phone}"
+	
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(
+        Order,
+        related_name="items",
+        on_delete=models.CASCADE
+    )
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    product_name = models.CharField(max_length=255)
+    product_image = models.ImageField(
+        upload_to="orders/products/",
+        null=True,
+        blank=True
+    )
+    barcode = models.CharField(max_length=255)
+
+    variation = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name="Вариация"
+    )
+
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        verbose_name = "Заказ продукции"
+        verbose_name_plural = "Заказы продукции"
+
+    def __str__(self):
+        return f"{self.product_name} x{self.quantity}"

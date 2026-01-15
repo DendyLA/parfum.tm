@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from parler_rest.serializers import TranslatableModelSerializer, TranslatedFieldsField
 
-from .models import Category, Product, Promotion, Brand, ProductGallery
+from .models import Category, Product, Promotion, Brand, ProductGallery, Order, OrderItem, ProductVariation, ProductVariationImage, VariationType
 
 
 class CategorySerializer(TranslatableModelSerializer):
@@ -49,35 +49,65 @@ class BrandSerializer(serializers.ModelSerializer):
 class ProductGallerySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductGallery
-        fields = ["id", "image", "alt_text"]
+        fields = ("id", "image", "alt_text")
+
+class ProductVariationImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductVariationImage
+        fields = ("id", "image", "alt_text")
+
+class VariationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VariationType
+        fields = ("id", "code", "name")
+
+
+class ProductVariationSerializer(serializers.ModelSerializer):
+    variation_type = VariationTypeSerializer(read_only=True)
+    gallery = ProductVariationImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ProductVariation
+        fields = (
+            "id",
+            "variation_type",
+            "value",
+            "color_hex",
+            "is_active",
+            "gallery",
+        )
+
 
 
 class ProductSerializer(TranslatableModelSerializer):
-	translations = TranslatedFieldsField(shared_model=Product)
-	brand = BrandSerializer(read_only=True)
-	category = CategorySerializer(read_only=True)
-	gallery = ProductGallerySerializer(many=True, read_only=True)
+    translations = TranslatedFieldsField(shared_model=Product)
 
-	class Meta:
-		model = Product
-		fields = (
-			"id",
-			"barcode",
-			"translations",
-			"brand",
-			"category",
-			"price",
-			"discount_price",
-			"image",
-			"count",
-			"variations",
-			"created_at",
-			"updated_at",
-			"slug",
-            'gallery',
-            'isRecommended',
-		)
-		read_only_fields = ("id", "created_at", "updated_at", "slug",)
+    brand = BrandSerializer(read_only=True)
+    category = CategorySerializer(read_only=True)
+
+    gallery = ProductGallerySerializer(many=True, read_only=True)
+    variations = ProductVariationSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        fields = (
+            "id",
+            "barcode",
+            "translations",
+            "brand",
+            "category",
+            "price",
+            "discount_price",
+            "image",
+            "count",
+            "gallery",
+            "variations",
+            "isRecommended",
+            "created_at",
+            "updated_at",
+            "slug",
+        )
+        read_only_fields = ("id", "created_at", "updated_at", "slug")
 
 
 
@@ -89,3 +119,17 @@ class PromotionSerializer(TranslatableModelSerializer):
         fields = ("id", "translations", "image", "active")
         read_only_fields = ("id",)
 
+
+class OrderItemCreateSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    variation = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    quantity = serializers.IntegerField(min_value=1)
+
+
+class OrderCreateSerializer(serializers.Serializer):
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    phone = serializers.CharField()
+    comment = serializers.CharField(required=False, allow_blank=True)
+    total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    items = OrderItemCreateSerializer(many=True)

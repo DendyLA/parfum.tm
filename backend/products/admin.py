@@ -3,10 +3,36 @@ from django.contrib import admin
 from parler.admin import TranslatableAdmin
 from django.utils.html import mark_safe
 from .forms import ProductAdminForm
+from django.utils.html import format_html
 
-from .models import Category, Product, Promotion, Brand, ProductGallery
+from .models import Category, Product, Promotion, Brand, ProductGallery, Order, OrderItem, ProductVariation, ProductVariationImage, VariationType
 
 
+class ProductVariationImageInline(nested_admin.NestedTabularInline):
+    model = ProductVariationImage
+    extra = 2
+    fields = ("image", "alt_text")
+
+class ProductVariationInline(nested_admin.NestedStackedInline):
+    model = ProductVariation
+    extra = 1
+    inlines = [ProductVariationImageInline]
+    fields = ("variation_type", "value", "color_hex", "is_active")
+
+
+class ProductGalleryInline(nested_admin.NestedTabularInline):
+    model = ProductGallery
+    extra = 3
+    fields = ("image", "alt_text")
+
+
+
+@admin.register(VariationType)
+class VariationTypeAdmin(admin.ModelAdmin):
+    list_display = ("name", "code")
+    search_fields = ("name", "code")
+    prepopulated_fields = {"code": ("name",)}
+    
 @admin.register(Category)
 class CategoryAdmin(TranslatableAdmin):
     list_display = ("name", "parent", "get_full_path")
@@ -27,27 +53,33 @@ class CategoryAdmin(TranslatableAdmin):
     get_full_path.short_description = "Полный путь"
 
 
-#-------------------GalleryProductInline-------------------
-class ProductGalleryInline(admin.TabularInline):
-	model = ProductGallery
-	extra = 3  # сколько дополнительных фото добавить сразу
-	fields = ['image', 'alt_text']
 # ------------------ Product ------------------
 @admin.register(Product)
-class ProductAdmin(TranslatableAdmin):
-    inlines = [ProductGalleryInline]
-    form = ProductAdminForm
-    list_display = ('id', "barcode", "name", "price", "variations", "discount_price", 'image_preview', "count")
-    list_display_links = ("name", "barcode",)
-    list_filter = ("category",)
-    search_fields = ("translations__name", "barcode",)
-    readonly_fields = ("barcode", "created_at", "updated_at", 'slug', 'image_preview',)
-    list_editable = ("price", "discount_price", )
+class ProductAdmin(nested_admin.NestedModelAdmin, TranslatableAdmin):
+    inlines = [
+        ProductGalleryInline,      # основная галерея
+        ProductVariationInline,    # вариации + их галереи
+    ]
+
+    list_display = (
+        "id",
+        "barcode",
+        "name",
+        "price",
+        "discount_price",
+        "count",
+        "image_preview",
+    )
+
+    search_fields = ("translations__name", "barcode")
+    list_filter = ("category", "brand")
+    readonly_fields = ("barcode", "created_at", "updated_at", "slug", "image_preview")
+    list_editable = ("price", "discount_price")
     list_per_page = 10
 
     fieldsets = (
         ("Основная информация", {
-            "fields": ("name", "description", 'isRecommended')
+            "fields": ("name", "description", "isRecommended")
         }),
         ("Цены и наличие", {
             "fields": ("price", "discount_price", "count")
@@ -55,22 +87,21 @@ class ProductAdmin(TranslatableAdmin):
         ("Категории и бренды", {
             "fields": ("brand", "category")
         }),
-        ("Идентификаторы", {
-            "fields": ("barcode", "slug")
+        ("Изображение товара", {
+            "fields": ("image", "image_preview")
         }),
-        ("Изображения и вариации", {
-            "fields": ("image", "variations", "image_preview")
-        }),
-        ("Системная информация", {
+        ("Системные данные", {
             "classes": ("collapse",),
-            "fields": ("created_at", "updated_at")
+            "fields": ("barcode", "slug", "created_at", "updated_at")
         }),
     )
 
     def image_preview(self, obj):
         if obj.image:
-            return mark_safe(f'<img src="{obj.image.url}" width="80" height="80" style="object-fit: cover;" />')
-        return "Нет изображения"
+            return mark_safe(
+                f'<img src="{obj.image.url}" width="80" style="object-fit:cover;" />'
+            )
+        return "—"
 
     image_preview.short_description = "Превью"
 
@@ -89,3 +120,88 @@ class BrandAdmin(admin.ModelAdmin):
     list_display = ("name", "logo")
     readonly_fields = ('slug',)
     list_per_page = 10
+
+
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+
+    readonly_fields = (
+        "product",
+        "product_name",
+        "barcode",
+        "variation",
+        "quantity",
+        "price",
+        "product_image_preview",
+    )
+
+    def product_image_preview(self, obj):
+        if obj.product_image:
+            return format_html(
+                '<img src="{}" style="max-height:80px;" />',
+                obj.product_image.url
+            )
+        return "—"
+
+    product_image_preview.short_description = "Фото товара"
+
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "first_name",
+        "last_name",
+        "phone",
+        "total_price",
+        "created_at",
+    )
+
+    list_filter = ("created_at",)
+    search_fields = ("phone", "first_name", "last_name")
+
+    readonly_fields = (
+        "first_name",
+        "last_name",
+        "phone",
+        "comment",
+        "total_price",
+        "created_at",
+    )
+
+    inlines = [OrderItemInline]
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "product_name",
+        "variation",
+        "quantity",
+        "price",
+        "order",
+    )
+
+    readonly_fields = (
+        "order",
+        "product",
+        "product_name",
+        "barcode",
+        "variation",
+        "quantity",
+        "price",
+        "product_image_preview",
+    )
+
+    def product_image_preview(self, obj):
+        if obj.product_image:
+            return format_html(
+                '<img src="{}" style="max-height:80px;" />',
+                obj.product_image.url
+            )
+        return "—"
+
+    product_image_preview.short_description = "Фото товара"	
