@@ -1,130 +1,172 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from "react";
-import intlTelInput from "intl-tel-input";
-import "intl-tel-input/build/css/intlTelInput.css";
-import styles from './OrderForm.module.scss'
+import React, { useState, useEffect } from "react";
+import styles from './OrderForm.module.scss';
+import { createOrder } from "@/lib/endpoints"; 
+import { getCart, clearCart } from "@/lib/addToCart";
+import Modal from "@/components/Modal/Modal";
 
+export default function OrderForm({ onSuccess }) {
+  const [form, setForm] = useState({
+    firstName: "",
+    address: "",
+    phone: "",
+    comment: "",
+  });
 
-export default function OrderForm({ onSubmit }) {
-	const phoneRef = useRef(null);
-	const itiRef = useRef(null);
+  const [cart, setCart] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-	const [form, setForm] = useState({
-		firstName: "",
-		lastName: "",
-		phone: "",
-		comment: "",
-	});
+  const [modal, setModal] = useState({ visible: false, title: "", message: "" });
 
-	const [errors, setErrors] = useState({});
+  useEffect(() => {
+    setCart(getCart());
+  }, []);
 
-	// 🔹 инициализация intl-tel-input
-	useEffect(() => {
-		if (!phoneRef.current) return;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
 
-		itiRef.current = intlTelInput(phoneRef.current, {
-			initialCountry: "tm",
-			onlyCountries: ["tm"],
-			separateDialCode: true,
-			nationalMode: false,
-			nationalMode: true,
-			autoPlaceholder: "aggressive",
-			utilsScript:
-				"https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
-		});
+  const validatePhone = (phone) => {
+    const cleaned = phone.replace(/\D/g, "");
+    return cleaned.length >= 5 && cleaned.length <= 12;
+  };
 
-		return () => {
-			itiRef.current?.destroy();
-		};
-	}, []);
+  const validate = () => {
+    const newErrors = {};
+    if (!form.firstName.trim()) newErrors.firstName = "Введите имя";
+    if (!form.address.trim()) newErrors.address = "Введите адрес";
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setForm(prev => ({ ...prev, [name]: value }));
-	};
+    if (!form.phone.trim()) {
+      newErrors.phone = "Введите номер телефона";
+    } else if (!validatePhone(form.phone)) {
+      newErrors.phone = "Введите корректный номер телефона";
+    }
 
-	const validate = () => {
-		const newErrors = {};
+    const currentCart = getCart();
+    if (!currentCart || currentCart.length === 0) newErrors.cart = "Корзина пуста";
 
-		if (!form.firstName.trim()) newErrors.firstName = "Введите имя";
-		if (!form.lastName.trim()) newErrors.lastName = "Введите фамилию";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-		if (!itiRef.current || !itiRef.current.isValidNumber()) {
-			newErrors.phone = "Введите корректный номер Туркменистана";
-		}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
 
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
-	};
+    setLoading(true);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+    try {
+      const currentCart = getCart();
+      if (!currentCart || currentCart.length === 0) throw new Error("Корзина пуста");
 
-		if (!validate()) return;
+      const totalPrice = currentCart.reduce(
+        (sum, item) => sum + (parseFloat(item.price) || 0) * item.quantity,
+        0
+      );
 
-		const phone = itiRef.current.getNumber(); // +9936xxxxxxx
+      const itemsForServer = currentCart.map(item => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        variation_id: item.variation_id || null,
+      }));
 
-		const data = {
-			...form,
-			phone,
-		};
+      await createOrder({
+        first_name: form.firstName,
+        phone: form.phone,
+        address: form.address,
+        comment: form.comment,
+        total_price: totalPrice.toString(),
+        items: itemsForServer,
+      });
 
-		console.log("ORDER DATA:", data);
-		onSubmit?.(data);
-	};
+      // Очищаем форму и корзину
+      setForm({ firstName: "", address: "", phone: "", comment: "" });
+      clearCart();
+      setCart([]);
+      setErrors({});
+      setModal({
+        visible: true,
+        title: "Заказ успешно оформлен",
+        message: "Скоро с вами свяжутся",
+      });
+      onSuccess?.();
+    } catch (err) {
+      console.error(err);
+      setModal({
+        visible: true,
+        title: "Ошибка",
+        message: err.message || "Попробуйте снова",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-	return (
-		<form className={styles.form} onSubmit={handleSubmit}>
-			<div className={styles.form__box}>
-				<div className={styles.form__wrapper}>
-					<input
-						type="text"
-						name="firstName"
-						className={`${styles.form__input}`}
-						placeholder="Ваше Имя"
-						value={form.firstName}
-						onChange={handleChange}
-						required
-					/>
-					<input
-						type="text"
-						name="lastName"
-						className={`${styles.form__input}`}
-						placeholder="Ваша фамилия"
-						value={form.lastName}
-						onChange={handleChange}
-						required
-					/>
-				</div>
+  return (
+    <>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <div className={styles.form__box}>
+          <div className={styles.form__wrapper}>
+            <input
+              type="text"
+              name="firstName"
+              className={styles.form__input}
+              placeholder="Имя"
+              value={form.firstName}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="address"
+              className={styles.form__input}
+              placeholder="Адрес"
+              value={form.address}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-				<div className={styles.form__wrapper}>
-					{/* ✅ intl-tel-input */}
-					<input
-						ref={phoneRef}
-						type="tel"
-						className={`${styles.form__input}`}
-						placeholder="62 123456"
-						required
-					/>
+          <div className={styles.form__wrapper}>
+            <input
+              type="tel"
+              name="phone"
+              className={styles.form__input}
+              placeholder="8 63129586 или +99363129586"
+              value={form.phone}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="comment"
+              className={styles.form__input}
+              placeholder="Комментарий (необязательно)"
+              value={form.comment}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
 
-					<input
-						type="text"
-						name="comment"
-						className={`${styles.form__input}`}
-						placeholder="Ваш комментарий (необязательно)"
-						value={form.comment}
-						onChange={handleChange}
-					/>
-				</div>
-			</div>
-			
+        {errors.firstName && <p className={styles.form__error}>{errors.firstName}</p>}
+        {errors.address && <p className={styles.form__error}>{errors.address}</p>}
+        {errors.phone && <p className={styles.form__error}>{errors.phone}</p>}
+        {errors.cart && <p className={styles.form__error}>{errors.cart}</p>}
 
-			{errors.phone && <p className={styles.form__error}>{errors.phone}</p>}
+        <button type="submit" className={styles.form__submit} disabled={loading}>
+          {loading ? "Отправка..." : "Оформить заказ"}
+        </button>
+      </form>
 
-			<button type="submit" className={`${styles.form__submit}`}>
-				Оформить заказ
-			</button>
-		</form>
-	);
+      <Modal
+        visible={modal.visible}
+        title={modal.title}
+        message={modal.message}
+        onClose={() => setModal({ ...modal, visible: false })}
+      />
+    </>
+  );
 }

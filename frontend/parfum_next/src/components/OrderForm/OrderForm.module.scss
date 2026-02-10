@@ -41,5 +41,7 @@
 			background-color: #fff;
 		}
 	}
-
+	&__error{
+		color: $color-extra;
+	}
 }

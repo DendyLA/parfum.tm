@@ -4,69 +4,67 @@ export function getCart() {
 	if (typeof window === "undefined") return [];
 	try {
 		return JSON.parse(localStorage.getItem("cart")) || [];
-	} catch (e) {
-		console.error("Ошибка чтения корзины:", e);
+	} catch {
 		return [];
 	}
 }
 
 export function saveCart(cart) {
 	if (typeof window === "undefined") return;
-	try {
-		localStorage.setItem("cart", JSON.stringify(cart));
-	} catch (e) {
-		console.error("Ошибка сохранения корзины:", e);
-	}
+	localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// сравниваем selectedVariation по JSON
-function isSameVariation(a, b) {
-	if (!a && !b) return true;
-	if (!a || !b) return false;
-	return JSON.stringify(a) === JSON.stringify(b);
+// 🔑 ключ товара = product_id + variation_id
+function makeKey(productId, variationId) {
+	return variationId ? `${productId}-${variationId}` : `${productId}`;
 }
-
-// Генерируем уникальный идентификатор для вариации
-function getVariationKey(product) {
-	if (!product.selectedVariation) return product.id;
-	return `${product.id}-${product.selectedVariation.id || product.selectedVariation.value}`;
-}
-
 export function addToCart(product) {
+	if (!product?.id) return getCart();
+
 	const cart = getCart();
 
-	const existing = cart.find(
-		(item) =>
-			item.id === product.id &&
-			isSameVariation(item.selectedVariation, product.selectedVariation)
-	);
+	const variationId = product.selectedVariation?.id || null;
+	const key = variationId ? `${product.id}-${variationId}` : `${product.id}`;
+
+	const existing = cart.find(item => item._key === key);
 
 	if (existing) {
-		existing.quantity = (existing.quantity || 1) + 1;
+		existing.quantity += 1;
 	} else {
-		cart.push({ ...product, quantity: 1, _key: getVariationKey(product) });
+		cart.push({
+			_key: key,
+
+			product_id: product.id,
+			variation_id: variationId,
+
+			variation_label: product.selectedVariation?.value || null,
+			variation_color: product.selectedVariation?.color_hex || null, // ← цвет добавлен
+
+			name: product.translations?.ru?.name || product.name,
+			price: product.discount_price || product.price,
+			image: product.image,
+
+			category_name: product.category?.translations?.ru?.name || "Без категории", // для отображения категории
+
+			quantity: 1,
+		});
 	}
 
 	saveCart(cart);
 	return cart;
 }
 
-export function removeFromCart(id, selectedVariation) {
-	const cart = getCart().filter(
-		(item) => !(item.id === id && isSameVariation(item.selectedVariation, selectedVariation))
-	);
+export function removeFromCart(key) {
+	const cart = getCart().filter(item => item._key !== key);
 	saveCart(cart);
 	return cart;
 }
 
-export function updateQuantity(id, selectedVariation, newQty) {
+export function updateQuantity(key, qty) {
 	const cart = getCart()
-		.map(item => {
-			if (item.id === id && isSameVariation(item.selectedVariation, selectedVariation)) {
-				return { ...item, quantity: newQty };
-			}
-			return item;
-		})
+		.map(item =>
+			item._key === key ? { ...item, quantity: qty } : item
+		)
 		.filter(item => item.quantity > 0);
 
 	saveCart(cart);
@@ -78,6 +76,5 @@ export function clearCart() {
 }
 
 export function getCartCount() {
-	const cart = getCart();
-	return cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+	return getCart().reduce((sum, item) => sum + item.quantity, 0);
 }

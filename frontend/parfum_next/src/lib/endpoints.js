@@ -188,33 +188,52 @@ export async function searchProducts(query, limit = 3, full = false) {
 
 
 
-
+/**
+ * Создание заказа
+ * @param {Object} param0
+ * @param {string} param0.first_name - Имя клиента
+ * @param {string} param0.phone - Телефон клиента
+ * @param {string} param0.address - Адрес клиента
+ * @param {string} [param0.comment] - Комментарий
+ * @param {Array} param0.items - Массив товаров из localStorage
+ * @param {number} param0.total_price - Общая сумма
+ */
 export async function createOrder({
-	first_name,
-	last_name,
-	phone,
-	comment = "",
-	items = [],
-	total_price,
+  first_name,
+  phone,
+  address,
+  comment = "",
+  items = [],
+  total_price,
 }) {
-	if (!first_name || !last_name || !phone) {
-		throw new Error("Имя, фамилия и телефон обязательны");
-	}
+  if (!first_name || !phone || !address) {
+    throw new Error("Имя, адрес и телефон обязательны");
+  }
 
-	if (!items.length) {
-		throw new Error("Корзина пуста");
-	}
+  if (!items.length) {
+    throw new Error("Корзина пуста");
+  }
 
-	return await apiFetch("/orders/", {
-		method: "POST",
-		body: JSON.stringify({
-			first_name,
-			last_name,
-			phone,
-			comment,
-			items,
-			total_price,
-		}),
-	});
+	const body = {
+		first_name,
+		phone,
+		address,
+		comment,
+		total_price: total_price.toString(), // для DecimalField
+		items: items.map(item => ({
+			product_id: item.product_id,
+			variation_id: item.variation_id || null,
+			quantity: item.quantity,
+		})),
+	};
+
+
+  return await apiFetch("/orders/create/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
 }
-

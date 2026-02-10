@@ -56,7 +56,7 @@ export default function Brands({ onClose }) {
 						<ul className={styles.brands__list}>
 							{grouped[letter].map((c) => (
 								<li key={c.id}>
-								<Link href={`/brands/${c.slug}`}>
+								<Link href={`/brands/${c.slug}`} onClick={onClose}>
 									{c.name}
 								</Link>
 								</li>
