@@ -1,0 +1,14 @@
+{
+  "loading": "Загрузка...",
+  "notFound": "Продукт не найден",
+  "noTitle": "Без названия",
+  "noCategory": "Без категории",
+  "bestChoice": "Лучший выбор",
+  "currency": "man",
+  "outOfStock": "Нет в наличии",
+  "added": "Добавлено",
+  "addToCart": "В корзину",
+  "chooseVariation": "Выберите вариант товара",
+  "inStock": "Есть в наличии!",
+  "description": "Описание"
+}

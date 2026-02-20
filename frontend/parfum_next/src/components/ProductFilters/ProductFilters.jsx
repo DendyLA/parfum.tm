@@ -1,101 +1,111 @@
 'use client';
 import React, { useState, useEffect, useRef } from "react";
-import styles from './ProductFilters.module.scss'
+import styles from './ProductFilters.module.scss';
 import { ArrowUp, ArrowDown } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
+import { useMessages } from "@/hooks/useMessages";
 
-export default function ProductFilters({ onChange, values }) {
-	// Получаем значения фильтров из props или ставим пустые
-	const [ordering, setOrdering] = useState(values?.ordering || "");
-	const [minPrice, setMinPrice] = useState(values?.min_price || "");
-	const [maxPrice, setMaxPrice] = useState(values?.max_price || "");
-	const [hasDiscount, setHasDiscount] = useState(values?.has_discount || false);
+/**
+ * Многоязычный компонент фильтров продуктов
+ * @param {function} onChange - callback при изменении фильтров
+ * @param {object} values - текущие значения фильтров
+ */
+export default function ProductFilters({ onChange, values = {} }) {
+  const { locale } = useLocale(); // берем текущий язык из контекста
+  const messages = useMessages("productFilters", locale); // загружаем переводы
 
-	const debounceRef = useRef(null);
+  // Локальный state фильтров
+  const [ordering, setOrdering] = useState(values?.ordering || "");
+  const [minPrice, setMinPrice] = useState(values?.min_price || "");
+  const [maxPrice, setMaxPrice] = useState(values?.max_price || "");
+  const [hasDiscount, setHasDiscount] = useState(values?.has_discount || false);
 
-	// При изменении внешних values — синхронизируем state
-	useEffect(() => {
-		setOrdering(values?.ordering || "");
-		setMinPrice(values?.min_price || "");
-		setMaxPrice(values?.max_price || "");
-		setHasDiscount(values?.has_discount || false);
-	}, [values]);
+  const debounceRef = useRef(null);
 
-	// Универсальный вызов onChange с debounce
-	useEffect(() => {
-		clearTimeout(debounceRef.current);
+  // Синхронизируем state с props.values
+  useEffect(() => {
+    setOrdering(values?.ordering || "");
+    setMinPrice(values?.min_price || "");
+    setMaxPrice(values?.max_price || "");
+    setHasDiscount(values?.has_discount || false);
+  }, [values]);
 
-		debounceRef.current = setTimeout(() => {
-			onChange({
-				ordering: ordering || undefined,
-				min_price: minPrice || undefined,
-				max_price: maxPrice || undefined,
-				has_discount: hasDiscount ? true : undefined,
-			});
-		}, 300);
+  // Вызываем onChange с debounce
+  useEffect(() => {
+    clearTimeout(debounceRef.current);
 
-		return () => clearTimeout(debounceRef.current);
-	}, [ordering, minPrice, maxPrice, hasDiscount]);
+    debounceRef.current = setTimeout(() => {
+      onChange({
+        ordering: ordering || undefined,
+        min_price: minPrice || undefined,
+        max_price: maxPrice || undefined,
+        has_discount: hasDiscount ? true : undefined,
+      });
+    }, 300);
 
-	const toggleOrdering = (value) => {
-		setOrdering((prev) => (prev === value ? "" : value));
-	};
+    return () => clearTimeout(debounceRef.current);
+  }, [ordering, minPrice, maxPrice, hasDiscount, onChange]);
 
-	return (
-		<div className={styles.filters}>
-			{/* Сортировка */}
-			<div className={styles.sorting}>
-				<span
-					className={ordering === "price" ? styles.active : ""}
-					onClick={() => toggleOrdering("price")}
-				>
-					Цена <ArrowUp height={20}/>
-				</span>
+  const toggleOrdering = (value) => {
+    setOrdering(prev => (prev === value ? "" : value));
+  };
 
-				<span
-					className={ordering === "-price" ? styles.active : ""}
-					onClick={() => toggleOrdering("-price")}
-				>
-					Цена <ArrowDown height={20}/>
-				</span>
+  return (
+    <div className={styles.filters}>
+      {/* Сортировка */}
+      <div className={styles.sorting}>
+        <span
+          className={ordering === "price" ? styles.active : ""}
+          onClick={() => toggleOrdering("price")}
+        >
+          {messages.price || "Цена"} <ArrowUp height={20}/>
+        </span>
 
-				<span
-					className={ordering === "-created_at" ? styles.active : ""}
-					onClick={() => toggleOrdering("-created_at")}
-				>
-					Новинки
-				</span>
-			</div>
+        <span
+          className={ordering === "-price" ? styles.active : ""}
+          onClick={() => toggleOrdering("-price")}
+        >
+          {messages.price || "Цена"} <ArrowDown height={20}/>
+        </span>
 
-			{/* Фильтр цены */}
-			<div className={styles.price__range}>
-				<input
-					type="number"
-					placeholder="Мин. цена"
-					value={minPrice}
-					className={styles.inputNumber}
-					onChange={(e) => setMinPrice(e.target.value)}
-				/>
+        <span
+          className={ordering === "-created_at" ? styles.active : ""}
+          onClick={() => toggleOrdering("-created_at")}
+        >
+          {messages.new || "Новинки"}
+        </span>
+      </div>
 
-				<input
-					type="number"
-					placeholder="Макс. цена"
-					value={maxPrice}
-					className={styles.inputNumber}
-					onChange={(e) => setMaxPrice(e.target.value)}
-				/>
-			</div>
+      {/* Фильтр цены */}
+      <div className={styles.price__range}>
+        <input
+          type="number"
+          placeholder={messages.minPrice || "Мин. цена"}
+          value={minPrice}
+          className={styles.inputNumber}
+          onChange={(e) => setMinPrice(e.target.value)}
+        />
 
-			{/* Только со скидкой */}
-			<div className={styles.discount}>
-				<label className={ hasDiscount ? styles.active : ""}>
-					<input
-						type="checkbox"
-						checked={hasDiscount}
-						onChange={(e) => setHasDiscount(e.target.checked)}
-					/>
-					Только со скидкой
-				</label>
-			</div>
-		</div>
-	);
+        <input
+          type="number"
+          placeholder={messages.maxPrice || "Макс. цена"}
+          value={maxPrice}
+          className={styles.inputNumber}
+          onChange={(e) => setMaxPrice(e.target.value)}
+        />
+      </div>
+
+      {/* Только со скидкой */}
+      <div className={styles.discount}>
+        <label className={hasDiscount ? styles.active : ""}>
+          <input
+            type="checkbox"
+            checked={hasDiscount}
+            onChange={(e) => setHasDiscount(e.target.checked)}
+          />
+          {messages.discountOnly || "Только со скидкой"}
+        </label>
+      </div>
+    </div>
+  );
 }

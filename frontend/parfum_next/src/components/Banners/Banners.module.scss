@@ -37,3 +37,37 @@
 		
 	}
 }
+
+@media (max-width: 970px) {
+	.banner{
+		.slider{
+			height: 300px;
+		}
+	}
+}
+
+@media (max-width: 780px) {
+	.banner{
+		.slider{
+			height: 250px;
+		}
+	}
+}
+
+@media (max-width: 640px) {
+	.banner{
+		.slider{
+			height: 220px;
+		}
+	}
+}
+
+@media (max-width: 560px) {
+	.banner{
+		.slider{
+			height: 190px;
+		}
+	}
+}
+
+

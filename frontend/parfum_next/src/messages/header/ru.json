@@ -1,6 +1,10 @@
 {
   "features": "100% оригинальная продукция",
-  "actions": ["Акции", "Доставка и оплата", "Про магазин"],
+  "actions": [
+    { "label": "Контакты", "href": "contacts" },
+    { "label": "Доставка и оплата", "href": "delivery" },
+    { "label": "Про магазин", "href": "about" }
+  ],
   "languages": ["Рус", "Ткм"],
   "searchPlaceholder": "Больше 60 000 товаров"
 }

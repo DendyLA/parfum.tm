@@ -10,12 +10,13 @@ import MenuItem from "@mui/material/MenuItem";
 
 import styles from "./Variations.module.scss";
 
-/**
- * @param {Array} variations - массив объектов вариаций DRF
- * @param {Object} selected - выбранная вариация
- * @param {Function} onSelect - callback при выборе вариации
- */
+import { useMessages } from "@/hooks/useMessages";
+import { useLocale } from "@/context/LocaleContext";
+
 export default function Variations({ variations = [], selected, onSelect }) {
+    const { locale } = useLocale();
+    const t = useMessages("variations", locale);
+
     const [value, setValue] = useState(selected?.id || "");
 
     const handleChange = (event) => {
@@ -29,13 +30,15 @@ export default function Variations({ variations = [], selected, onSelect }) {
 
     return (
         <FormControl fullWidth className={styles.variations}>
-            <InputLabel id="variation-select-label">Выберите вариант</InputLabel>
+            <InputLabel id="variation-select-label">
+                {t.selectOption}
+            </InputLabel>
 
             <Select
                 labelId="variation-select-label"
                 id="variation-select"
                 value={value}
-                label="Выберите вариант"
+                label={t.selectOption}
                 onChange={handleChange}
             >
                 {variations.map(v => (

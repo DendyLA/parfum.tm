@@ -1,14 +1,13 @@
 'use client';
 import React, { useEffect, useState } from "react";
 import { getCategoryBySlug } from "@/lib/endpoints";
-import InfiniteProductList from "@/components/InfinityProductList/InfinityProductList";
+import ProductsByCategory from "@/components/InfinityProductList/ProductsByCategory";
 import ProductFilters from "@/components/ProductFilters/ProductFilters";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
-import Skeleton from "@mui/material/Skeleton";
-
-import ProductsByCategory from "@/components/InfinityProductList/ProductsByCategory";
+import { useLocale } from "@/context/LocaleContext";
 
 export default function CategoryFetcher({ slug }) {
+	const { locale } = useLocale(); // текущий язык 'ru' или 'tk'
 	const [category, setCategory] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [filters, setFilters] = useState({});
@@ -31,13 +30,18 @@ export default function CategoryFetcher({ slug }) {
 		fetchCategory();
 	}, [slug]);
 
+	if (loading) return <p>Загрузка...</p>;
+	if (!category) return <p>{locale === 'tk' ? 'Kategoriýa tapylmady' : 'Категория не найдена'}</p>;
 
-
-	if (!category) return <p>Категория не найдена</p>;
+	// Динамически берём название категории по выбранному языку
+	const categoryName =
+		category.translations?.[locale]?.name ||
+		category.name ||
+		(locale === 'tk' ? 'Kategoriýa' : 'Категория');
 
 	const breadcrumbItems = [
 		{ name: "PARFUMTM", href: "/" },
-		{ name: category.translations.ru.name } // текущее имя категории
+		{ name: categoryName }
 	];
 
 	return (
@@ -45,10 +49,6 @@ export default function CategoryFetcher({ slug }) {
 			<Breadcrumbs items={breadcrumbItems} />
 			<ProductFilters key={category.id} values={filters} onChange={setFilters} />
 			<ProductsByCategory categoryId={category.id} filters={filters}/>
-			{/* <InfiniteProductList 
-				categoryId={category.id}
-				filters={filters}
-			/> */}
 		</>
 	)
 }

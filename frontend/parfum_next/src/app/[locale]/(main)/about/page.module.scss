@@ -1,0 +1,30 @@
+@import '../../../../styles/variables';
+
+.intro{
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	min-height: 800px;
+	color: #fff;
+	line-height: 3rem;
+	display: flex;
+	flex-direction: column;
+	padding: 6rem 0;
+	&__container{
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+	&__wrapper{
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
+		flex: 1;
+	}
+	&__title{
+		max-width: 600px;
+		font-weight: 400;
+		font-size: $title-h4;
+	}
+}

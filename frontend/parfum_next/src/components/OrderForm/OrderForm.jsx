@@ -1,12 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from './OrderForm.module.scss';
-import { createOrder } from "@/lib/endpoints"; 
+import { createOrder } from "@/lib/endpoints";
 import { getCart, clearCart } from "@/lib/addToCart";
 import Modal from "@/components/Modal/Modal";
 
+import { useLocale } from "@/context/LocaleContext";
+import { useMessages } from "@/hooks/useMessages";
+
 export default function OrderForm({ onSuccess }) {
+  const { locale } = useLocale();
+
+  const messagesObj = useMessages("orderForm", locale)?.orderForm || {};
+
+  const t = (path, fallback = "") =>
+    path.split(".").reduce((o, k) => o?.[k], messagesObj) ?? fallback;
+
   const [form, setForm] = useState({
     firstName: "",
     address: "",
@@ -14,15 +24,14 @@ export default function OrderForm({ onSuccess }) {
     comment: "",
   });
 
-  const [cart, setCart] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const [modal, setModal] = useState({ visible: false, title: "", message: "" });
-
-  useEffect(() => {
-    setCart(getCart());
-  }, []);
+  const [modal, setModal] = useState({
+    visible: false,
+    title: "",
+    message: ""
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,19 +43,23 @@ export default function OrderForm({ onSuccess }) {
     return cleaned.length >= 5 && cleaned.length <= 12;
   };
 
-  const validate = () => {
+  const validate = (cartToCheck) => {
     const newErrors = {};
-    if (!form.firstName.trim()) newErrors.firstName = "Введите имя";
-    if (!form.address.trim()) newErrors.address = "Введите адрес";
+    const cartData = cartToCheck || [];
 
-    if (!form.phone.trim()) {
-      newErrors.phone = "Введите номер телефона";
-    } else if (!validatePhone(form.phone)) {
-      newErrors.phone = "Введите корректный номер телефона";
-    }
+    if (!form.firstName.trim())
+      newErrors.firstName = t("errors.name", "Введите имя");
 
-    const currentCart = getCart();
-    if (!currentCart || currentCart.length === 0) newErrors.cart = "Корзина пуста";
+    if (!form.address.trim())
+      newErrors.address = t("errors.address", "Введите адрес");
+
+    if (!form.phone.trim())
+      newErrors.phone = t("errors.phoneRequired", "Введите номер");
+    else if (!validatePhone(form.phone))
+      newErrors.phone = t("errors.phoneInvalid", "Неверный номер");
+
+    if (!cartData || cartData.length === 0)
+      newErrors.cart = t("errors.emptyCart", "Корзина пуста");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -54,14 +67,15 @@ export default function OrderForm({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+
+    // Берём актуальную корзину прямо перед отправкой
+    const currentCart = getCart();
+
+    if (!validate(currentCart)) return;
 
     setLoading(true);
 
     try {
-      const currentCart = getCart();
-      if (!currentCart || currentCart.length === 0) throw new Error("Корзина пуста");
-
       const totalPrice = currentCart.reduce(
         (sum, item) => sum + (parseFloat(item.price) || 0) * item.quantity,
         0
@@ -82,23 +96,24 @@ export default function OrderForm({ onSuccess }) {
         items: itemsForServer,
       });
 
-      // Очищаем форму и корзину
       setForm({ firstName: "", address: "", phone: "", comment: "" });
       clearCart();
-      setCart([]);
       setErrors({});
+
       setModal({
         visible: true,
-        title: "Заказ успешно оформлен",
-        message: "Скоро с вами свяжутся",
+        title: t("success.title", "Успешно"),
+        message: t("success.message", "Заказ оформлен"),
       });
+
       onSuccess?.();
     } catch (err) {
       console.error(err);
+
       setModal({
         visible: true,
-        title: "Ошибка",
-        message: err.message || "Попробуйте снова",
+        title: t("error.title", "Ошибка"),
+        message: err.message || t("error.message", "Попробуйте снова"),
       });
     } finally {
       setLoading(false);
@@ -114,19 +129,18 @@ export default function OrderForm({ onSuccess }) {
               type="text"
               name="firstName"
               className={styles.form__input}
-              placeholder="Имя"
+              placeholder={t("placeholders.name", "Имя")}
               value={form.firstName}
               onChange={handleChange}
-              required
             />
+
             <input
               type="text"
               name="address"
               className={styles.form__input}
-              placeholder="Адрес"
+              placeholder={t("placeholders.address", "Адрес")}
               value={form.address}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -135,16 +149,16 @@ export default function OrderForm({ onSuccess }) {
               type="tel"
               name="phone"
               className={styles.form__input}
-              placeholder="8 63129586 или +99363129586"
+              placeholder={t("placeholders.phone", "Телефон")}
               value={form.phone}
               onChange={handleChange}
-              required
             />
+
             <input
               type="text"
               name="comment"
               className={styles.form__input}
-              placeholder="Комментарий (необязательно)"
+              placeholder={t("placeholders.comment", "Комментарий")}
               value={form.comment}
               onChange={handleChange}
             />
@@ -157,7 +171,7 @@ export default function OrderForm({ onSuccess }) {
         {errors.cart && <p className={styles.form__error}>{errors.cart}</p>}
 
         <button type="submit" className={styles.form__submit} disabled={loading}>
-          {loading ? "Отправка..." : "Оформить заказ"}
+          {loading ? t("buttons.loading", "Отправка...") : t("buttons.submit", "Оформить")}
         </button>
       </form>
 

@@ -1,3 +1,5 @@
+
+
 import { getProducts, getPromotions } from "@/lib/endpoints";
 import { getDiscountProducts } from '@/lib/getDiscountProducts';
 import ProductSection from "@/components/ProductSection/ProductSection";
@@ -41,7 +43,7 @@ export default async function Home({ params }) {
 
 			<section className='section_padd'>
 				<div className="container">
-					<h4 className='title'>{messages.special}</h4>
+					<h4 className='title'>{messages.special }</h4>
 					<InfiniteProductList endpoint="/products/" />
 				</div>
 			</section>

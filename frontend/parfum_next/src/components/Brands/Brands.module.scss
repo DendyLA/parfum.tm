@@ -67,3 +67,12 @@
 	}
 }
 
+
+@media (max-width: 815px){
+	.brands{
+		&__wrapper{
+			width: 100vw;
+			padding: 4rem;
+		}
+	}
+}

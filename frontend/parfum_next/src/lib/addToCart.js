@@ -1,5 +1,4 @@
 // lib/cart.js
-
 export function getCart() {
 	if (typeof window === "undefined") return [];
 	try {
@@ -18,34 +17,31 @@ export function saveCart(cart) {
 function makeKey(productId, variationId) {
 	return variationId ? `${productId}-${variationId}` : `${productId}`;
 }
-export function addToCart(product) {
+
+export function addToCart(product, locale = "ru") {
 	if (!product?.id) return getCart();
 
 	const cart = getCart();
-
 	const variationId = product.selectedVariation?.id || null;
-	const key = variationId ? `${product.id}-${variationId}` : `${product.id}`;
+	const key = makeKey(product.id, variationId);
 
 	const existing = cart.find(item => item._key === key);
 
 	if (existing) {
-		existing.quantity += 1;
+		existing.quantity += 1; // ✅ увеличиваем
 	} else {
 		cart.push({
 			_key: key,
-
 			product_id: product.id,
 			variation_id: variationId,
-
 			variation_label: product.selectedVariation?.value || null,
-			variation_color: product.selectedVariation?.color_hex || null, // ← цвет добавлен
-
-			name: product.translations?.ru?.name || product.name,
-			price: product.discount_price || product.price,
-			image: product.image,
-
-			category_name: product.category?.translations?.ru?.name || "Без категории", // для отображения категории
-
+			variation_color: product.selectedVariation?.color_hex || null,
+			name: product.translations?.[locale]?.name || product.name || "Нет имени",
+			translations: product.translations || {},
+			price: product.discount_price || product.price || 0,
+			image: product.image || "/placeholder.png",
+			category_name: product.category?.translations?.[locale]?.name || product.category?.name || "Нет категории",
+			category: product.category || {},
 			quantity: 1,
 		});
 	}
@@ -62,11 +58,8 @@ export function removeFromCart(key) {
 
 export function updateQuantity(key, qty) {
 	const cart = getCart()
-		.map(item =>
-			item._key === key ? { ...item, quantity: qty } : item
-		)
+		.map(item => (item._key === key ? { ...item, quantity: qty } : item))
 		.filter(item => item.quantity > 0);
-
 	saveCart(cart);
 	return cart;
 }

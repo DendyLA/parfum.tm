@@ -36,7 +36,8 @@ export default function ProductCard({ product = {} }) {
 		if (product.variations && product.variations.length > 0) {
 			router.push(withLocale(`/products/${product.slug}`));
 		} else {
-			addToCart(product);
+			console.log("Добавляем в корзину:", product);
+			addToCart(product, locale);
 			setAdded(true);
 			setTimeout(() => setAdded(false), 1500);
 		}

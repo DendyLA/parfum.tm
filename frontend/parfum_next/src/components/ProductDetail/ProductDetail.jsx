@@ -12,13 +12,18 @@ import { addToCart } from "@/lib/addToCart";
 import Variations from "../Variations/Variations";
 import ProductGallery from "../ProductGallery/ProductGallery";
 
-export default function ProductDetail({ slug, locale = 'ru' }) {
+import { useMessages } from "@/hooks/useMessages";
+import { useLocale } from "@/context/LocaleContext";
+
+export default function ProductDetail({ slug }) {
+  const { locale } = useLocale();
+  const t = useMessages("productDetail", locale);
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false);
   const [selectedVariation, setSelectedVariation] = useState(null);
 
-  // Загружаем продукт
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
@@ -27,23 +32,21 @@ export default function ProductDetail({ slug, locale = 'ru' }) {
       .finally(() => setLoading(false));
   }, [slug]);
 
-  // Добавляем продукт в недавно просмотренные
   useEffect(() => {
     if (!product) return;
     addRecentProduct(product);
   }, [product]);
 
-  if (loading) return <p>Загрузка...</p>;
-  if (!product) return <p>Продукт не найден</p>;
+  if (loading) return <p>{t.loading}</p>;
+  if (!product) return <p>{t.notFound}</p>;
 
-  // Все активные вариации
   const variationsArray = Array.isArray(product.variations)
     ? product.variations.filter(v => v.is_active)
     : [];
+
   const hasVariations = variationsArray.length > 0;
   const disableBuy = hasVariations && !selectedVariation;
 
-  // Галерея
   const galleryImages = selectedVariation?.gallery?.length
     ? selectedVariation.gallery.map(g => g.image)
     : [
@@ -51,19 +54,17 @@ export default function ProductDetail({ slug, locale = 'ru' }) {
         ...(product.gallery?.map(g => g.image) ?? [])
       ];
 
-  // Хлебные крошки с проверкой null
   const breadcrumbItems = [
-    { name: "PARFUMTM", href: "/" },
+    { name: "PARFUMTM", href: `/${locale}` },
     {
-      name: product.category?.translations?.[locale]?.name || "Без категории",
-      href: product.category ? `/categories/${product.category.slug}` : "#"
+      name: product.category?.translations?.[locale]?.name || t.noCategory,
+      href: product.category ? `/${locale}/categories/${product.category.slug}` : "#"
     },
-    { name: product.translations?.[locale]?.name || "Без названия" }
+    { name: product.translations?.[locale]?.name || t.noTitle }
   ];
 
   const outOfStock = !product.count || product.count < 1;
 
-  // Добавление в корзину
   const handleAddToCart = () => {
     if (disableBuy || outOfStock) return;
 
@@ -79,7 +80,7 @@ export default function ProductDetail({ slug, locale = 'ru' }) {
     addToCart({
       ...product,
       selectedVariation: variationData
-    });
+    }, locale);
 
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
@@ -90,36 +91,40 @@ export default function ProductDetail({ slug, locale = 'ru' }) {
       <Breadcrumbs items={breadcrumbItems} />
 
       <div className={styles.product__wrapper}>
-        {/* Информация о продукте */}
         <div className={styles.product__info}>
-          <div className={styles.product__hit}>Лучший выбор</div>
+          <div className={styles.product__hit}>{t.bestChoice}</div>
+
           <div className={styles.product__name}>
-            {product.translations?.[locale]?.name || "Без названия"}
+            {product.translations?.[locale]?.name || t.noTitle}
           </div>
+
           <div className={styles.product__category}>
-            {product.category?.translations?.[locale]?.name || "Без категории"}
+            {product.category?.translations?.[locale]?.name || t.noCategory}
           </div>
         </div>
 
-        {/* Галерея */}
         <div className={styles.product__gallery}>
           <ProductGallery images={galleryImages} />
         </div>
 
-        {/* Заказ */}
         <div className={styles.product__order}>
           <div className={styles.price}>
             {product.discount_price ? (
               <>
-                <div className={styles.price__new}>{product.discount_price} man</div>
-                <div className={styles.price__old}>{product.price} man</div>
+                <div className={styles.price__new}>
+                  {product.discount_price} {t.currency}
+                </div>
+                <div className={styles.price__old}>
+                  {product.price} {t.currency}
+                </div>
               </>
             ) : (
-              <div className={styles.price__static}>{product.price} man</div>
+              <div className={styles.price__static}>
+                {product.price} {t.currency}
+              </div>
             )}
           </div>
 
-          {/* Вариации */}
           {hasVariations && !outOfStock && (
             <Variations
               variations={variationsArray}
@@ -128,30 +133,37 @@ export default function ProductDetail({ slug, locale = 'ru' }) {
             />
           )}
 
-          {/* Кнопка купить */}
           <div
             className={`${styles.product__btn} ${disableBuy ? styles.disabled : ''}`}
             onClick={handleAddToCart}
           >
-            {outOfStock ? "Нет в наличии" : added ? "Добавлено" : "В корзину"}
+            {outOfStock
+              ? t.outOfStock
+              : added
+                ? t.added
+                : t.addToCart}
           </div>
 
-          {/* Подсказка если не выбрана вариация */}
           {disableBuy && !outOfStock && (
-            <span className={styles.extra}>Выберите вариант товара</span>
+            <span className={styles.extra}>{t.chooseVariation}</span>
           )}
 
-          {!outOfStock && <div className={styles.product__available}>Есть в наличии!</div>}
+          {!outOfStock && (
+            <div className={styles.product__available}>
+              {t.inStock}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Описание */}
       {product.translations?.[locale]?.description && (
         <div className={styles.product__about}>
-          <div className={styles.product__descr}>Описание</div>
+          <div className={styles.product__descr}>{t.description}</div>
           <div
             className={styles.product__text}
-            dangerouslySetInnerHTML={{ __html: cleanHtml(product.translations[locale].description) }}
+            dangerouslySetInnerHTML={{
+              __html: cleanHtml(product.translations[locale].description)
+            }}
           />
         </div>
       )}

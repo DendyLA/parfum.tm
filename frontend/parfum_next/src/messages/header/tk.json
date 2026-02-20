@@ -1,6 +1,10 @@
 {
   "features": "100% hakyky önümler",
-  "actions": ["Arzanladyşlar", "Eltip bermek hyzmaty we töleg hakynda", "Biz barada"],
+  "actions": [
+    { "label": "Habarlaşmak üçin", "href": "contacts" },
+    { "label": "Eltip bermek hyzmaty we töleg hakynda", "href": "delivery" },
+    { "label": "Biz barada", "href": "about" }
+  ],
   "languages": ["Rus", "Tkm"],
   "searchPlaceholder": "60 000-den köp haryt"
 }

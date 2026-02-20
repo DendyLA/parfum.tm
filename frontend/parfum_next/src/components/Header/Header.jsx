@@ -64,13 +64,16 @@ export default function Header() {
 
           <div className={styles.actions}>
             <ul className={styles.actions__list}>
-              {messages.actions?.map((action, i) => (
-                <li key={i} className={styles.actions__item}>
-                  <Link href="#" className={i === 0 ? "link-extra" : "link"}>
-                    {action}
-                  </Link>
-                </li>
-              ))}
+				{messages.actions?.map((action, i) => (
+					<li key={i} className={styles.actions__item}>
+						{/* <Link href="#" className={i === 0 ? "link-extra" : "link"}>
+							{action}
+						</Link> */}
+						<Link href={`/${locale}/${action.href}`} className="link">
+						{action.label}
+						</Link>
+					</li>
+				))}
             </ul>
           </div>
 
@@ -114,7 +117,7 @@ export default function Header() {
           </div>
 
           <div className={styles.header__logo}>
-            <Link href="/" className="link">
+            <Link href="/" className="link" >
               <Image src="/images/logo/logo.svg" alt="Company Logo" width={180} height={60} priority />
             </Link>
           </div>

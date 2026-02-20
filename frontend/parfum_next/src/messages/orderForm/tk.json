@@ -1,0 +1,29 @@
+{
+  "orderForm": {
+    "placeholders": {
+      "name": "Adyňyz",
+      "address": "Salgyňyz",
+      "phone": "8 63129586 ýa-da +99363129586",
+      "comment": "Bellik (hökman däl)"
+    },
+    "buttons": {
+      "submit": "Sargyt etmek",
+      "loading": "loading..."
+    },
+    "errors": {
+      "name": "Adyňyzy ýazyň",
+      "address": "Salgyny ýazyň",
+      "phoneRequired": "Telefon belgisini ýazyň",
+      "phoneInvalid": "Dogry telefon belgisini ýazyň",
+      "emptyCart": "Sebet boş"
+    },
+    "success": {
+      "title": "Sargyt üstünlikli ýerine ýetirildi",
+      "message": "Ýakyn wagtda size jaň ederis"
+    },
+    "error": {
+      "title": "Ýalňyşlyk",
+      "message": "Ýene synanyşyň"
+    }
+  }
+}

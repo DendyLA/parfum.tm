@@ -113,3 +113,22 @@
 		opacity: 0;
 	}
 }
+
+
+@media (max-width: 1000px) {
+	.nav{
+		justify-content: space-between;
+		&__wrapper {
+			display: none;
+		}
+	}
+
+}
+
+@media (max-width: 815px){
+	.subNav{
+		&__overlay {
+			width: 100vw;
+		}
+	}
+}

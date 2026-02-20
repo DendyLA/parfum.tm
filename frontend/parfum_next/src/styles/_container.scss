@@ -5,8 +5,16 @@
 	position: relative;       // чтобы внутренние absolute работали
 	display: block;           // базовое отображение
 
+
+	
+
 	// Мобильные и планшетные экраны
 	@media (min-width: 1440px) {
 		width: calc(100% - 192px);
 	}
+
+	@media (max-width: 500px) {
+		width: calc(100% - 60px);
+	}
+	
 }

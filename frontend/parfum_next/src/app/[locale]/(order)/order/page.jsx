@@ -1,28 +1,33 @@
 
-
 import OrderForm from "@/components/OrderForm/OrderForm";
 import OrderInfo from "@/components/OrderInfo/OrderInfo";
 
-import styles from './page.module.scss'
+import styles from './page.module.scss';
 
+export default async function OrderPage({ params }) {
+	const locale = params.locale || "ru";
 
-export default function OrderPage() {
+	const messages = await import(`@/messages/order/${locale}.json`)
+		.then(m => m.default)
+		.catch(() => ({}));
 
-	
+	return (
+		<div className={styles.order}>
+		<div className="container">
+			<div className={styles.order__box}>
+			<div className={styles.order__item}>
+				<h1 className={`${styles.order__title} title`}>
+				{messages.title}
+				</h1>
 
-    return (
-        <div className={styles.order}>
-			<div className="container">
-				<div className={styles.order__box}>
-					<div className={styles.order__item}>
-						<h1 className={`${styles.order__title} title`}>Оформление заказа</h1>
-						<OrderForm/>
-					</div>
-					<div className="order__item">
-						<OrderInfo/>
-					</div>
-				</div>
+				<OrderForm />
 			</div>
-		</div>	
-    );
+
+			<div className="order__item">
+				<OrderInfo />
+			</div>
+			</div>
+		</div>
+		</div>
+	);
 }
