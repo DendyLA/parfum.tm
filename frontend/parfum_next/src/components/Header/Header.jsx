@@ -66,11 +66,8 @@ export default function Header() {
             <ul className={styles.actions__list}>
 				{messages.actions?.map((action, i) => (
 					<li key={i} className={styles.actions__item}>
-						{/* <Link href="#" className={i === 0 ? "link-extra" : "link"}>
-							{action}
-						</Link> */}
-						<Link href={`/${locale}/${action.href}`} className="link">
-						{action.label}
+						<Link href={`/${locale}/${action.href}`} className={i === 0 ? "link-extra" : "link"}>
+							{action.label}
 						</Link>
 					</li>
 				))}

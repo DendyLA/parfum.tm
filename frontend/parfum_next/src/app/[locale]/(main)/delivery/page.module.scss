@@ -1,0 +1,38 @@
+.delivery {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.subtitle {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.card {
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+
+  p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    font-size: 16px;
+    color: #333;
+  }
+}
+
+.time {
+  font-size: 20px;
+  font-weight: 600;
+  color: #c89b3c; // можно заменить на фирменный цвет
+}

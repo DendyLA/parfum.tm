@@ -1,7 +1,7 @@
 {
   "features": "100% оригинальная продукция",
   "actions": [
-    { "label": "Контакты", "href": "contacts" },
+    { "label": "Акции", "href": "sale" },
     { "label": "Доставка и оплата", "href": "delivery" },
     { "label": "Про магазин", "href": "about" }
   ],

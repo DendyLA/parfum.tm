@@ -234,11 +234,32 @@
 
 @media (max-width: 695px){
 	.cart{
+		height: 100vh;
+		&__wrapper{
+			height: 90vh;
+			overflow-y: scroll;
+			padding: 1rem 2rem;
+		}
 		&__info{
 			min-width: 10rem;
 		}
 		&__item{
 			flex-direction: column;
+		}
+		&__list{
+			padding: 0;
+		}
+		&__all{
+			gap: 2rem;
+			padding: 2rem;
+			justify-content: center;
+			align-items: center;
+		}
+		&__total{
+			font-size: 1.3rem;
+		}
+		&__submit{
+			font-size: 1.4rem;
 		}
 
 	}

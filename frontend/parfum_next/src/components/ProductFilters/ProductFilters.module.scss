@@ -61,3 +61,25 @@
 .inputNumber {
   	-moz-appearance: textfield;
 }
+
+
+
+
+
+
+
+@media (max-width: 824px){
+	.filters{
+		flex-wrap: wrap;
+	}
+	.price__range{
+		flex-wrap: wrap;
+		input{
+			width: 100%;
+		}
+	}
+}
+
+@media (max-width: 695px){
+
+}

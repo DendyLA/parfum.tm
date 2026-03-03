@@ -104,11 +104,11 @@
 
 @media (max-width: 1000px) {
 	.header{
-		& .actions{
+		.features{
 			display: none;
 		}
-		.features{
-			flex: 0 0 50%;
+		.actions{
+			justify-content: left;
 		}
 	}
 
@@ -121,6 +121,26 @@
 			top: 40px;
 		}
 	}
+}
+
+@media (max-width: 460px) {
+	.header{
+		&__top{
+			flex-direction: column;
+		}
+		.actions{
+			&__list{
+				gap: 1rem;
+				font-size: 1.3rem;
+			}
+		}
+		.lang{
+			&__list{
+				font-size: 1.3rem;
+			}
+		}
+	}
+	
 }
 
 @media (max-width:400px){

@@ -17,6 +17,7 @@ export async function getProducts({
 	ordering,
 	is_recommended,
 	in_stock, // <- новый параметр для фильтрации по count
+	on_sale,
 	} = {}) {
 	const params = new URLSearchParams();
 
@@ -37,6 +38,10 @@ export async function getProducts({
 		// true → только товары с count > 0
 		// false → только товары с count = 0
 		params.append("in_stock", in_stock);
+	}
+	if (on_sale !== undefined) {
+		// true → только акционные товары
+		params.append("on_sale", on_sale);
 	}
 
 	try {

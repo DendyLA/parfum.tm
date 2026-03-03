@@ -1,7 +1,7 @@
 {
   "features": "100% hakyky önümler",
   "actions": [
-    { "label": "Habarlaşmak üçin", "href": "contacts" },
+    { "label": "Arzanladyşlar", "href": "sale" },
     { "label": "Eltip bermek hyzmaty we töleg hakynda", "href": "delivery" },
     { "label": "Biz barada", "href": "about" }
   ],
