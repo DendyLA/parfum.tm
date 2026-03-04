@@ -79,6 +79,7 @@
 	}
 	&__delete{
 		align-self: flex-end;
+		width: 26px;
 	}
 	&__bottom{
 		display: flex;
@@ -92,4 +93,27 @@
 		font: $brand-name;
 		font-size: 2rem;
 	}
+}
+
+
+@media (max-width: 460px) {
+	.info{
+		padding: 2rem 2rem;
+		&__desc{
+			font-size: 2rem;
+		}
+		&__middle{
+			position: relative;
+			padding: 0;
+		}
+		&__delete{
+			position: absolute;
+			top: 2rem;
+			right: 0;
+		}
+	}
+}
+
+@media (max-width: 360px) {
+	
 }

@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
 				<div className={styles.order__wrapper}>
 					<Link href="/" className={`${styles.order__link} link`}>
 					<MoveLeft />
-					Вернуться к покупкам
+					<span>Вернуться к покупкам</span> 
 					</Link>
 
 					<Link className={`${styles.order__image} link`} href="/">

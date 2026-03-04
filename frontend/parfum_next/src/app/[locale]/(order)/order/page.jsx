@@ -13,21 +13,21 @@ export default async function OrderPage({ params }) {
 
 	return (
 		<div className={styles.order}>
-		<div className="container">
-			<div className={styles.order__box}>
-			<div className={styles.order__item}>
-				<h1 className={`${styles.order__title} title`}>
-				{messages.title}
-				</h1>
+			<div className="container">
+				<div className={styles.order__box}>
+				<div className={styles.order__item}>
+					<h1 className={`${styles.order__title} title`}>
+					{messages.title}
+					</h1>
 
-				<OrderForm />
-			</div>
+					<OrderForm />
+				</div>
 
-			<div className="order__item">
-				<OrderInfo />
+				<div className="order__item">
+					<OrderInfo />
+				</div>
+				</div>
 			</div>
-			</div>
-		</div>
 		</div>
 	);
 }
