@@ -1,32 +1,31 @@
 import styles from "./page.module.scss";
 
-export default function DeliveryPage() {
+// Прямой импорт JSON с переводами
+import ruMessages from "@/messages/delivery/ru.json";
+import tkMessages from "@/messages/delivery/tk.json";
+
+export default function DeliveryPage({ params: { locale } }) {
+  // Выбираем нужные сообщения по locale
+  const messages = locale === "tk" ? tkMessages : ruMessages;
+
   return (
     <div className={styles.delivery}>
-		<h1 className={styles.title}>Доставка</h1>
+		<h1 className={styles.title}>{messages.title}</h1>
 
 		<div className={styles.card}>
-			<p>
-			Мы осуществляем доставку по Ашхабаду и по всему Туркменистану.
-			</p>
-			<p>
-			Стоимость и сроки доставки рассчитываются индивидуально в зависимости от адреса.
-			</p>
+			<p>{messages.deliveryInfo1}</p>
+			<p>{messages.deliveryInfo2}</p>
 		</div>
 
 		<div className={styles.card}>
-			<h2 className={styles.subtitle}>График работы магазина</h2>
-			<p>Понедельник – Воскресенье</p>
-			<p className={styles.time}>09:00 – 20:00</p>
+			<h2 className={styles.subtitle}>{messages.scheduleTitle}</h2>
+			<p>{messages.scheduleDays}</p>
+			<p className={styles.time}>{messages.scheduleTime}</p>
 		</div>
 
 		<div className={styles.card}>
-			<p>
-			Время работы службы доставки и онлайн-консультантов может отличаться.
-			</p>
-			<p>
-			Для получения дополнительной информации свяжитесь с нами.
-			</p>
+			<p>{messages.note1}</p>
+			<p>{messages.note2}</p>
 		</div>
     </div>
   );

@@ -2,7 +2,7 @@
   "features": "100% hakyky önümler",
   "actions": [
     { "label": "Arzanladyşlar", "href": "sale" },
-    { "label": "Eltip bermek hyzmaty we töleg hakynda", "href": "delivery" },
+    { "label": "Eltip beriş we töleg", "href": "delivery" },
     { "label": "Biz barada", "href": "about" }
   ],
   "languages": ["Rus", "Tkm"],

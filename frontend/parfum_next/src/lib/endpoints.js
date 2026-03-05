@@ -242,3 +242,47 @@ export async function createOrder({
     body: JSON.stringify(body),
   });
 }
+
+
+
+
+//meta DATA
+
+// Получаем все продукты
+export async function getAllProductSlugs() {
+  let page = 1;
+  let slugs = [];
+  let hasMore = true;
+
+  while (hasMore) {
+    const res = await getProducts({ page, pageSize: 100 }); // адаптируй pageSize
+    if (!res || res.length === 0) {
+      hasMore = false;
+    } else {
+      slugs.push(...res.map(p => p.slug));
+      page++;
+    }
+  }
+
+  return slugs;
+}
+
+// Получаем все категории
+export async function getAllCategorySlugs() {
+  const tree = await getCategoryTree(); // твой метод для дерева категорий
+  const slugs = [];
+
+  const flatten = node => {
+    slugs.push(node.slug);
+    if (node.children) node.children.forEach(flatten);
+  };
+
+  tree.forEach(flatten);
+  return slugs;
+}
+
+// Получаем все бренды
+export async function getAllBrandSlugs() {
+  const res = await getBrands({ pageSize: 1000 }); // если есть пагинация, делай как у продуктов
+  return res.map(b => b.slug);
+}

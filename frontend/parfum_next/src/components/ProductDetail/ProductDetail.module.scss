@@ -167,10 +167,14 @@
 @media (max-width: 540px) {
 	.product{
 		&__about{
-			
+			padding: 2rem 2rem;
+			max-height: 500px;
 		}
 		&__descr{
 			
+		}
+		&__text{
+			padding-right: 0;
 		}
 	}
 }

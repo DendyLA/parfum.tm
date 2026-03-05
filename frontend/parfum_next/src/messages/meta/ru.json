@@ -1,0 +1,25 @@
+{
+	"about": {
+		"title": "О компании Parfum TM",
+		"description": "Parfum TM — более 25 лет на рынке Туркменистана. Оригинальная парфюмерия, косметика и лучшие мировые бренды.",
+		"keywords": "parfum tm, парфюм туркменистан, косметика ашхабад, оригинальная парфюмерия"
+	},
+	"layout": {
+		"title": "Parfum TM",
+		"description": "Оригинальная парфюмерия и косметика в Туркменистане. Более 25 лет на рынке. Большой выбор мировых брендов."
+	},
+	"brand": {
+		"title": "Бренд {name} — Parfum TM",
+		"description": "Каталог товаров бренда {name} в Parfum TM. Оригинальная парфюмерия и косметика в Туркменистане.",
+		"keywords": "{name}, парфюмерия, косметика, бренд"
+	},
+	"categoryPage": {
+		"title": "Категория {categoryName} | Parfum TM",
+		"description": "Все товары категории {categoryName} в магазине Parfum TM. Оригинальная парфюмерия и косметика."
+	},
+	"productPage": {
+		"title": "{productName} — Parfum TM",
+		"description": "Купить {productName} в Parfum TM. Оригинальная парфюмерия и косметика в Туркменистане.",
+		"keywords": "{productName}, парфюмерия, косметика"
+	}
+}

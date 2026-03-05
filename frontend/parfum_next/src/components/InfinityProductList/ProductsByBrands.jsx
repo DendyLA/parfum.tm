@@ -6,7 +6,14 @@ import styles from "./InfinityProductsList.module.scss";
 import { getProductsByBrand } from "@/lib/endpoints";
 import SkeletonList from "../SkeletonList/SkeletonList";
 
+import { useLocale } from "@/context/LocaleContext";
+import { useMessages } from "@/hooks/useMessages";
+
 export default function ProductsByBrand({ brandId, filters = {} }) {
+
+    const { locale } = useLocale();
+    const messages = useMessages("productsByBrand", locale);
+
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
@@ -15,10 +22,10 @@ export default function ProductsByBrand({ brandId, filters = {} }) {
     const pageRef = useRef(1);
     const initializedRef = useRef(false);
     const requestIdRef = useRef(0);
-	const filtersKey = JSON.stringify(filters);
+    const filtersKey = JSON.stringify(filters);
 
     // ============================
-    // СБРОС ПРИ СМЕНЕ БРЕНДА / ФИЛЬТРОВ
+    // СБРОС
     // ============================
     useEffect(() => {
         if (!brandId) return;
@@ -64,6 +71,7 @@ export default function ProductsByBrand({ brandId, filters = {} }) {
             setProducts(prev => [...prev, ...items]);
             pageRef.current += 1;
             initializedRef.current = true;
+
         } catch (e) {
             console.error("Ошибка загрузки товаров:", e);
             setHasMore(false);
@@ -74,17 +82,13 @@ export default function ProductsByBrand({ brandId, filters = {} }) {
         }
     }, [brandId, filtersKey, loading, hasMore]);
 
-    // ============================
-    // 🔥 ПЕРВАЯ ЗАГРУЗКА — ЯВНО
-    // ============================
+    // первая загрузка
     useEffect(() => {
         if (!brandId) return;
         loadMore();
     }, [brandId, filtersKey, loadMore]);
 
-    // ============================
-    // INFINITE SCROLL (ТОЛЬКО ПОСЛЕ ПЕРВОЙ ЗАГРУЗКИ)
-    // ============================
+    // infinite scroll
     useEffect(() => {
         if (!loaderRef.current || !initializedRef.current) return;
 
@@ -99,6 +103,7 @@ export default function ProductsByBrand({ brandId, filters = {} }) {
 
         observer.observe(loaderRef.current);
         return () => observer.disconnect();
+
     }, [loadMore]);
 
     return (
@@ -114,11 +119,15 @@ export default function ProductsByBrand({ brandId, filters = {} }) {
             {loading && <SkeletonList count={5} />}
 
             {!hasMore && products.length > 0 && (
-                <p className={styles.products__info}>Больше товаров нет</p>
+                <p className={styles.products__info}>
+                    {messages.noMoreProducts}
+                </p>
             )}
 
             {!hasMore && products.length === 0 && (
-                <p className={styles.products__info}>Товары не найдены</p>
+                <p className={styles.products__info}>
+                    {messages.noProducts}
+                </p>
             )}
         </>
     );

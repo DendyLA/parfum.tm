@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import styles from "./InfinityProductsList.module.scss";
 import { getProducts, getCategoryProducts } from "@/lib/endpoints";
+import { useLocale } from "@/context/LocaleContext";
+import { useMessages } from "@/hooks/useMessages";
 import Skeleton from "@mui/material/Skeleton";
 
 export default function InfiniteProductList({ categoryId, filters }) {
@@ -83,6 +85,9 @@ export default function InfiniteProductList({ categoryId, filters }) {
 		};
 	}, [loadProducts, loading, hasMore]);
 
+	const { locale } = useLocale();
+	const messages = useMessages("infinityProductList", locale);
+
 	return (
 		<>
 			<ul className={styles.products}>
@@ -92,7 +97,7 @@ export default function InfiniteProductList({ categoryId, filters }) {
 				<div ref={loaderRef} style={{ height: "1px" }}></div>
 				
 			</ul>
-			{!hasMore && <p className={styles.products__info}>Больше товаров нет</p>}
+			{!hasMore && <p className={styles.products__info}>{messages.noMoreProducts}</p>}
 		</>
 	);
 }

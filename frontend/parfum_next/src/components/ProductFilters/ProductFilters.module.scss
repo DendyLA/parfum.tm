@@ -70,7 +70,9 @@
 
 @media (max-width: 824px){
 	.filters{
-		flex-wrap: wrap;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: flex-start;
 	}
 	.price__range{
 		flex-wrap: wrap;

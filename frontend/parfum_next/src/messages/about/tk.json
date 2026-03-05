@@ -1,0 +1,30 @@
+{
+	"introTitle": "Parfum TM — 25 ýyl Türkmenistan bazarynda, müňlerçe razy müşderi we original parfýumeriýa we kosmetikanyň giň saýlawy.",
+	"introTop": "PARFUM TM-E HOŞ GELDIŇIZ",
+	"introSubtitle": "GÜZELLİK ÇÄKSIZ HÖKÜM SÜRÝÄN ÝER",
+	"introText": "Türkmenistanda ýokary hilli we original önümleriň, parfýumeriýanyň, ýüz bakja we kosmetikanyň söýüjileri üçin 25 ýyllyk şatlyk. Parfum TM — bu ylham mekany, her bir ysyň öz taryhy bar we her satyn alma aýratyn pursat bolýar. Bu ýerde dünýäniň synagdan geçen brendlary, eksklýuziw täzelikler we ýokary derejeli hyzmat bir ýere jemlenýär. Müşderileriň müňlerçesi her gün Parfum TM-i hilli, originalyk we professional çemeleşme sebäpli saýlaýar. Güzellik çäksiz — şonuň üçin assortiment we hyzmat her bir adamyň özüne ýaraýan ys we bakja tapmagy üçin döredilýär.",
+	"aboutParagraphs": [
+		"Dükanymyzyň içinde diňe meşhur harytlar däl-de, güzellik söýüjileri üçin ajaýyp täzelikler hem elmydama bar. Biz her bir müşderä ýürekden alada edýäris, ýüz we beden bakjasy üçin aýratyn maslahat berýäris we iň netijeli serişdeleri saýlamaga kömek edýäris, şeýlelikde her satyn alma iň ýokary netije getirýär we şatlyk bagş edýär.",
+		"Satyjy-maslahatçylarymyz size önümleri saýlamaga, deriniň bakjasy boýunça maslahat bermäge ýa-da iň gowy parfýumy tapmaga elmydama taýýar. Biz her satyn almany size iň rahat etmek üçin ýokary derejeli hyzmat we ygtybarly eltip berişi üpjün edýäris.",
+		"25 ýyllyk iş — bu diňe san däl, size has gowy bolmak üçin tagalla taryhy. Müşderilerimiz — biziň buýsançymyzdyr we biz size diňe iň gowy önümleri we aýratyn satyn alma tejribesini sowgat etmek üçin ösüp dowam ederis."
+	],
+	"mapPoints": [
+		{
+		"title": "\"Garaşsyzlygyň 15 ýyllygy\"",
+		"address1": "(optowka) 1-nji gat, Surikow tarapy",
+		"address2": "Dükan №105",
+		"phones": ["+99362907632", "+99312422746"]
+		},
+		{
+		"title": "\"Garaşsyzlygyň 15 ýyllygy\"",
+		"address1": "(optowka) 1-nji gat",
+		"address2": "Dükan №5 (köne bina)",
+		"phones": ["+99362907631", "+99312422745"]
+		},
+		{
+		"title": "\"Paytagt\" (Mir) bazary",
+		"address1": "Dükan №125",
+		"phones": ["+99362907635", "+99312462123"]
+		}
+	]
+}

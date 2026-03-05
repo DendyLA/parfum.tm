@@ -4,8 +4,14 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import styles from "./InfinityProductsList.module.scss";
 import { getProducts, getCategoryTree } from "@/lib/endpoints";
+import { useMessages } from "@/hooks/useMessages";
+import { useLocale } from "@/context/LocaleContext";
 
 export default function ProductsByCategory({ categoryId, filters = {} }) {
+	const { locale } = useLocale();
+    const messages = useMessages("productsByCategory", locale);
+
+
     const [products, setProducts] = useState([]);
     const [queue, setQueue] = useState([]);        // [{ id: 23, page: 1 }, ...]
     const [loading, setLoading] = useState(false);
@@ -134,16 +140,16 @@ export default function ProductsByCategory({ categoryId, filters = {} }) {
 
             {loading && (
                 <div style={{ padding: "40px 0", textAlign: "center" }}>
-                    Загрузка товаров...
+                     {messages.loadingProducts}
                 </div>
             )}
 
             {!hasMore && products.length > 0 && (
-                <p className={styles.products__info}>Больше товаров нет</p>
+                <p className={styles.products__info}>{messages.noMoreProducts}</p>
             )}
 
             {showNoProducts && (
-                <p className={styles.products__info}>Товары не найдены</p>
+                <p className={styles.products__info}>{messages.productsNotFound}</p>
             )}
         </>
     );

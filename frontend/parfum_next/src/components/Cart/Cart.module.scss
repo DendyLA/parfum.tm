@@ -5,7 +5,7 @@
 	top: 0;
 	left: 0;
 	width: 100vw;
-	height: 110vh;
+	height: 100%;
 	background-color: rgba($color: #000000, $alpha: .5);
 	z-index: 999;
 	display: flex;
@@ -234,7 +234,6 @@
 
 @media (max-width: 695px){
 	.cart{
-		height: 100vh;
 		&__wrapper{
 			height: 90vh;
 			overflow-y: scroll;

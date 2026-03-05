@@ -1,0 +1,24 @@
+{
+	"about": {
+		"title": "Parfum TM barada",
+		"description": "Parfum TM — Türkmenistanda 25 ýyldan gowrak wagt bäri işleýär. Dünýä belli parfýumeriýa we kosmetika.",
+		"keywords": "parfum tm, parfum turkmenistan, kosmetika ashgabat"
+	},
+  	"layout": {
+		"title": "Parfum TM",
+		"description": "Türkmenistanda 25 ýyldan gowrak wagt bäri işleýän Parfum TM. Dünýä belli parfýumeriýa we kosmetika."
+	},
+	"brandPage": {
+		"title": "{brandName} brendi ",
+		"description": "{brandName} brendiniň ähli önümleri Parfum TM dükanynda. Original parfumeriýa we kosmetika."
+	},
+	"categoryPage": {
+		"title": "{categoryName} kategoriýasy",
+		"description": "{categoryName} kategoriýasynyň ähli önümleri Parfum TM dükanynda. Original parfumeriýa we kosmetika."
+	},
+	"productPage": {
+		"title": "{productName} — Parfum TM",
+		"description": "{productName} satyn alyň Parfum TM-de. Original parfýumeriýa we kosmetika Türkmenistanda.",
+		"keywords": "{productName}, parfýumeriýa, kosmetika"
+	}
+}
