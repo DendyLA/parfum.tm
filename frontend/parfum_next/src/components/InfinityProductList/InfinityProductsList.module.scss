@@ -1,11 +1,9 @@
 @import '../../styles/variables';
 
 .products{
-	display: flex;
-	justify-content: flex-start;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: repeat(5, 1fr); /* большие экраны */
 	gap: 2rem;
-	// padding: 0;
 	li{
 		margin-top: 4rem;
 	}
@@ -17,4 +15,34 @@
 		font: $product-name;
 		color: #929292;
 	}
+}
+
+
+
+/* ноутбуки */
+@media (max-width: 1400px) {
+  .products {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* средние экраны */
+@media (max-width: 1200px) {
+  .products {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* планшеты */
+@media (max-width: 992px) {
+  .products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* мобильные */
+@media (max-width: 600px) {
+  .products {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
