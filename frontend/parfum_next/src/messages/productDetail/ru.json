@@ -10,5 +10,7 @@
   "addToCart": "В корзину",
   "chooseVariation": "Выберите вариант товара",
   "inStock": "Есть в наличии!",
-  "description": "Описание"
+  "description": "Описание",
+  "noBarcode" : "Нет кода товара",
+  "barcode": "Код товара"
 }

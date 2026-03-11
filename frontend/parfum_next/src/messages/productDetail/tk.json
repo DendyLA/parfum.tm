@@ -10,5 +10,7 @@
     "addToCart": "Sebede goş",
     "chooseVariation": "Harydyň görnüşini saýlaň",
     "inStock": "Eltip bermek elýeterli!",
-    "description": "Haryt hakynda"
+    "description": "Haryt hakynda",
+	"noBarcode" : "Haryt kody ýok",
+	"barcode": "Haryt kody"
 }

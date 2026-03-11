@@ -101,6 +101,10 @@ export default function ProductDetail({ slug }) {
           <div className={styles.product__category}>
             {product.category?.translations?.[locale]?.name || t.noCategory}
           </div>
+
+		   <div className={styles.product__code}>
+            {t.barcode}: {product.barcode || t.noBarcode}
+          </div>
         </div>
 
         <div className={styles.product__gallery}>
