@@ -8,20 +8,26 @@ import Brands from "../Brands/Brands";
 import { useLocale } from "@/context/LocaleContext";
 import { useMessages } from "@/hooks/useMessages";
 
-export default function CategoryMenu() {
+export default function CategoryMenu({ 
+  showBrands = true,
+  isOpen: externalOpen,
+  onClose
+}) {
   const { locale } = useLocale();
   const messages = useMessages("categoryMenu", locale);
 
   const [categories, setCategories] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const [animate, setAnimate] = useState(false);
   const [openCategories, setOpenCategories] = useState({});
   const [brandsOpen, setBrandsOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
+  const isControlled = externalOpen !== undefined;
+  const isOpen = isControlled ? externalOpen : internalOpen;
+
   useEffect(() => setIsClient(true), []);
 
-  // 👉 helper: добавляет язык в URL
   const withLocale = (path) => `/${locale}${path}`;
 
   async function fetchAllCategories() {
@@ -72,14 +78,36 @@ export default function CategoryMenu() {
     return () => { document.body.style.overflow = ""; };
   }, [isOpen, brandsOpen]);
 
+  // анимация
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => setAnimate(true), 10);
+    } else {
+      setAnimate(false);
+    }
+  }, [isOpen]);
+
   const toggleMenu = () => {
     if (isOpen) {
       setAnimate(false);
-      setTimeout(() => setIsOpen(false), 300);
+      setTimeout(() => {
+        if (isControlled) {
+          onClose?.();
+        } else {
+          setInternalOpen(false);
+        }
+      }, 300);
     } else {
-      setIsOpen(true);
+      if (!isControlled) {
+        setInternalOpen(true);
+      }
       setTimeout(() => setAnimate(true), 10);
     }
+  };
+
+  const closeMenu = () => {
+    if (isControlled) onClose?.();
+    else setInternalOpen(false);
   };
 
   const toggleCategory = slug => {
@@ -97,7 +125,7 @@ export default function CategoryMenu() {
             <div className={styles.subNav__link}>
               <Link
                 href={withLocale(`/categories/${cat.slug}`)}
-                onClick={() => setIsOpen(false)}
+                onClick={closeMenu}
               >
                 {cat.name}
               </Link>
@@ -128,9 +156,12 @@ export default function CategoryMenu() {
 
   return (
     <nav className={styles.nav}>
-      <div className={styles.nav__burger} onClick={toggleMenu}>
-        <Menu size={32} strokeWidth={1} />
-      </div>
+      {/* Бургер (работает только если НЕ controlled) */}
+      {!isControlled && (
+        <div className={styles.nav__burger} onClick={toggleMenu}>
+          <Menu size={32} strokeWidth={1} />
+        </div>
+      )}
 
       <ul className={styles.nav__wrapper}>
         {categories.map(cat => (
@@ -142,26 +173,48 @@ export default function CategoryMenu() {
         ))}
       </ul>
 
-      <ul className="nav__brands">
-        <li className={styles.nav__item} onClick={() => setBrandsOpen(true)}>
-          {messages.brands}
-        </li>
-      </ul>
+      {showBrands && (
+        <ul className="nav__brands">
+          <li className={styles.nav__item} onClick={() => setBrandsOpen(true)}>
+            {messages.brands}
+          </li>
+        </ul>
+      )}
 
-      {brandsOpen && <Brands onClose={() => setBrandsOpen(false)} />}
+      {showBrands && brandsOpen && (
+        <Brands onClose={() => setBrandsOpen(false)} />
+      )}
 
-      {isOpen && (
+      {/* {isOpen && (
         <div
           className={styles.subNav}
-          onClick={e => e.target === e.currentTarget && toggleMenu()}
+          onClick={e => {
+            if (e.target === e.currentTarget) closeMenu();
+          }}
         >
           <div className={`${styles.subNav__overlay} ${animate ? styles.subNav__overlay_open : ""}`}>
-            <X className={styles.subNav__icon} onClick={toggleMenu} />
+            <X className={styles.subNav__icon} onClick={closeMenu} />
             <div className={styles.subNav__title}>{messages.categories}</div>
             {renderCategories(categories)}
           </div>
         </div>
-      )}
+      )} */}
+	  {isOpen && (
+		<div
+			className={styles.subNav}
+			onClick={e => {
+			if (e.target === e.currentTarget) closeMenu();
+			}}
+		>
+			<div className={`${styles.subNav__overlay} ${animate ? styles.subNav__overlay_open : ""}`}>
+			<X className={styles.subNav__icon} onClick={closeMenu} />
+			<div className={styles.subNav__title}>{messages.categories}</div>
+
+			{/* Если категории еще не пришли — показать loader */}
+			{categories.length > 0 ? renderCategories(categories) : <p>Загрузка...</p>}
+			</div>
+		</div>
+		)}
     </nav>
   );
 }

@@ -1,6 +1,7 @@
 @import '../../styles/variables';
 
 .nav {
+	// position: fixed;
 	margin-top: 4rem;
 	display: flex;
 	align-items: center;
@@ -131,4 +132,15 @@
 			width: 100vw;
 		}
 	}
+}
+
+
+@media (max-width: 767px) {
+	.nav{
+		//  position: fixed;
+		&__burger{
+			display: none;
+		}
+	}
+
 }

@@ -42,7 +42,7 @@ export default function SearchPage() {
 		<div className={styles.search}>
 			<div className={`${styles.search__box} container`}>
 				<h1 className={styles.search__title}>
-					{messages.title} "{query}"
+					{`${messages.title} "${query}"`}
 				</h1>
 
 				<SearchResults results={results} loading={loading} messages={messages}/>

@@ -125,6 +125,7 @@ export default function Header() {
         </div>
 
         {/* Меню категорий */}
+		
         <CategoryMenu />
       </div>
 

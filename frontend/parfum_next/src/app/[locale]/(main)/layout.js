@@ -1,6 +1,7 @@
 import "@/styles/global.scss";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import MobileNav from "@/components/mobileNav/MobileNav";
 import RouteLoader from "../../loading";
 import { LocaleProvider } from "@/context/LocaleContext";
 
@@ -59,6 +60,7 @@ export default function LocaleLayout({ children, params }) {
 					<main>{children}</main>
 
 					<Footer />
+					<MobileNav />
 				</LocaleProvider>
 			</body>
 		</html>
