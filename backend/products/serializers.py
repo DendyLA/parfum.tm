@@ -103,6 +103,7 @@ class ProductSerializer(TranslatableModelSerializer):
             "gallery",
             "variations",
             "isRecommended",
+            "isOnSale",
             "created_at",
             "updated_at",
             "slug",
@@ -122,14 +123,22 @@ class PromotionSerializer(TranslatableModelSerializer):
 
 class OrderItemCreateSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
-    variation = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    variation_id = serializers.IntegerField(required=False, allow_null=True)
     quantity = serializers.IntegerField(min_value=1)
+
+
 
 
 class OrderCreateSerializer(serializers.Serializer):
     first_name = serializers.CharField()
-    last_name = serializers.CharField()
     phone = serializers.CharField()
-    comment = serializers.CharField(required=False, allow_blank=True)
-    total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    address = serializers.CharField()          # ← ОБЯЗАТЕЛЬНО
+    comment = serializers.CharField(
+        required=False,
+        allow_blank=True
+    )
+    total_price = serializers.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
     items = OrderItemCreateSerializer(many=True)

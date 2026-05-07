@@ -96,11 +96,16 @@ class Product(TranslatableModel):
 		name=models.CharField(max_length=255, verbose_name="Имя товара", help_text="Например: Помада Rouge Allure (получаю с склада)"),
 		description=RichTextField(blank=True, null=True, verbose_name="Описание товара", help_text="Опишите тоар, его особенности, состав"),
 	)
-
+	
 	category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Категория", help_text="Выберите категорию товара")
 	brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Бренд", help_text="Выберите бренд товара")
 	price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Цена", help_text="Напишите Цену без скидки")
 	isRecommended = models.BooleanField(default=False, verbose_name="Рекомендуемый товар", help_text="Отметьте, если товар рекомендуется")
+	isOnSale = models.BooleanField(
+		default=False,
+		verbose_name="Акционный товар",
+		help_text="Отметьте, если товар участвует в акции"
+	)
 	discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Скидочная цена", help_text='Напишите Скидочную цену')  # акция
 	image = models.ImageField(upload_to="products/%Y/%m/%d/", null=True, blank=True, verbose_name="Фото товара", help_text="Выберите Фото товара")
 	count = models.PositiveIntegerField(default=0, verbose_name="Количество на складе", help_text='Колчиество товаров с склада')  # количество на складе
@@ -249,11 +254,10 @@ class ProductVariationImage(models.Model):
 
 
 
-#Order
 class Order(models.Model):
     first_name = models.CharField(max_length=100, verbose_name="Имя")
-    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
     phone = models.CharField(max_length=30, verbose_name="Телефон")
+    address = models.TextField(verbose_name="Адрес")
     comment = models.TextField(blank=True, null=True, verbose_name="Комментарий")
 
     total_price = models.DecimalField(
@@ -270,42 +274,56 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Заказ #{self.id} — {self.phone}"
-	
+
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(
-        Order,
-        related_name="items",
-        on_delete=models.CASCADE
-    )
+	order = models.ForeignKey(
+		Order,
+		related_name="items",
+		on_delete=models.CASCADE,
+		verbose_name="Заказ"
+	)
 
-    product = models.ForeignKey(
-        Product,
-        on_delete=models.SET_NULL,
-        null=True
-    )
+	product = models.ForeignKey(
+		Product,
+		on_delete=models.SET_NULL,
+		null=True,
+		blank=True,
+		verbose_name="Товар"
+	)
 
-    product_name = models.CharField(max_length=255)
-    product_image = models.ImageField(
-        upload_to="orders/products/",
-        null=True,
-        blank=True
-    )
-    barcode = models.CharField(max_length=255)
+	variation = models.ForeignKey(
+		ProductVariation,
+		on_delete=models.SET_NULL,
+		null=True,
+		blank=True,
+		verbose_name="Вариация"
+	)
 
-    variation = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        verbose_name="Вариация"
-    )
+	product_name = models.CharField(
+		max_length=255,
+		verbose_name="Название товара"
+	)
 
-    quantity = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+	product_image = models.ImageField(
+		upload_to="orders/products/",
+		null=True,
+		blank=True,
+		verbose_name="Изображение товара"
+	)
 
-    class Meta:
-        verbose_name = "Заказ продукции"
-        verbose_name_plural = "Заказы продукции"
+	barcode = models.CharField(
+		max_length=255,
+		verbose_name="Бар код"
+	)
 
-    def __str__(self):
-        return f"{self.product_name} x{self.quantity}"
+	quantity = models.PositiveIntegerField(
+		default=1,
+		verbose_name="Количество"
+	)
+
+	price = models.DecimalField(
+		max_digits=10,
+		decimal_places=2,
+		verbose_name="Цена за единицу"
+	)

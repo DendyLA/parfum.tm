@@ -84,7 +84,10 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 CORS_ALLOW_ALL_ORIGINS = True
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://parfum.com.tm",
+]
 
 MIDDLEWARE = [
 	"corsheaders.middleware.CorsMiddleware",

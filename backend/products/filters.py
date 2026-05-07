@@ -9,7 +9,7 @@ class ProductFilter(filters.FilterSet):
 	has_discount = filters.BooleanFilter(method='filter_has_discount')
 	is_recommended = filters.BooleanFilter(field_name='isRecommended')
 	in_stock = filters.BooleanFilter(method='filter_in_stock')
-
+	on_sale = filters.BooleanFilter(field_name='isOnSale')
 
 	class Meta:
 		model = Product
