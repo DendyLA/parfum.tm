@@ -1,66 +1,57 @@
 @import '../../styles/variables';
-
 .search {
   margin-top: 4rem;
-
   &__box {
     display: flex;
     flex-direction: column;
     gap: 2rem;
   }
-
   &__wrapper {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     margin-top: 3rem;
-	
+    overflow: hidden; // добавь это
+
     ul {
-	padding-top: 4rem;
+      padding-top: 1rem; // было 4rem — слишком много
       display: grid;
-      grid-template-columns: repeat(4, 1fr); // десктоп 4 в ряд
+      grid-template-columns: repeat(4, 1fr);
       gap: 2rem;
       justify-items: center;
+      width: 100%; // добавь это
 
       li {
-        width: 100%; // чтобы элементы занимали всю колонку
-
+        width: 100%;
+        min-width: 0; // важно! без этого grid-item может вылезать
         a {
           display: block;
           width: 100%;
-        //   text-align: center;
           text-transform: capitalize;
           transition: all 0.4s;
           font: $product-desc;
-
           &:hover {
             opacity: 0.7;
           }
-
           img {
-            width: 100%;          // подстраиваем под колонку
-            height: 200px;        // фиксированная высота
-            object-fit: cover;    // обрезка, чтобы все фото одинаково
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
             border-radius: 8px;
           }
         }
       }
 
-      // Планшет
       @media (max-width: 1024px) {
         grid-template-columns: repeat(3, 1fr);
       }
-
-      // Мобильные
       @media (max-width: 767px) {
-        grid-template-columns: repeat(2, 1fr); // 2 товара в ряд
+        grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
-		row-gap: 4rem;
+        row-gap: 2rem; // было 4rem
       }
-
-      // Очень маленькие экраны
       @media (max-width: 592px) {
-        grid-template-columns: repeat(2, 1fr); // тоже 2, не 1
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   }

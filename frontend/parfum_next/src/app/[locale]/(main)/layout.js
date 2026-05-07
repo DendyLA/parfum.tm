@@ -4,6 +4,8 @@ import Footer from "@/components/Footer/Footer";
 import MobileNav from "@/components/mobileNav/MobileNav";
 import RouteLoader from "../../loading";
 import { LocaleProvider } from "@/context/LocaleContext";
+import ScrollToTop from "@/components/ScrollTop/ScrollTop";
+import ToTop from "@/components/ToTop/ToTop";
 
 import ruMeta from "@/messages/meta/ru.json";
 import tkMeta from "@/messages/meta/tk.json";
@@ -54,6 +56,7 @@ export default function LocaleLayout({ children, params }) {
 		<html lang={locale}>
 			<body>
 				<LocaleProvider>
+					<ToTop />
 					<Header />
 					<RouteLoader />
 
@@ -61,6 +64,7 @@ export default function LocaleLayout({ children, params }) {
 
 					<Footer />
 					<MobileNav />
+					<ScrollToTop />
 				</LocaleProvider>
 			</body>
 		</html>

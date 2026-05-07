@@ -18,7 +18,7 @@ import { useLocale } from "@/context/LocaleContext";
 export default function ProductDetail({ slug }) {
   const { locale } = useLocale();
   const t = useMessages("productDetail", locale);
-
+const [expanded, setExpanded] = useState(false);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false);
@@ -161,16 +161,26 @@ export default function ProductDetail({ slug }) {
       </div>
 
       {product.translations?.[locale]?.description && (
-        <div className={styles.product__about}>
-          <div className={styles.product__descr}>{t.description}</div>
-          <div
-            className={styles.product__text}
-            dangerouslySetInnerHTML={{
-              __html: cleanHtml(product.translations[locale].description)
-            }}
-          />
-        </div>
-      )}
+  <div className={styles.product__about}>
+    <div className={styles.product__descr}>{t.description}</div>
+
+    <div className={styles.product__content}>
+      <div
+        className={`${styles.product__text} ${expanded ? styles.expanded : ''}`}
+        dangerouslySetInnerHTML={{
+          __html: cleanHtml(product.translations[locale].description)
+        }}
+      />
+
+      <div
+        className={styles.product__more}
+        onClick={() => setExpanded(prev => !prev)}
+      >
+        {expanded ? t.hide || "Скрыть" : t.readMore || "Читать далее"}
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }

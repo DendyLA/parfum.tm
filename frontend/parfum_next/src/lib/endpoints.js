@@ -65,6 +65,7 @@ export async function getProductsByBrand({
 	has_discount,
 	in_stock, // <- новый параметр для фильтрации по count
 	} = {}) {
+	console.log(">>> getProductsByBrand вызван, brandId:", brandId);
 	const params = new URLSearchParams();
 
 	params.append("page", page);

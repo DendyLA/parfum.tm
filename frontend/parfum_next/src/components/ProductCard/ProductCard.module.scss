@@ -14,6 +14,7 @@
 		align-items: center;
 		aspect-ratio: 4 / 5;
 		width: 100%;
+		max-height: 245px;
 		// padding: 40px 32px;
 		& img{
 			width: 100%;
@@ -36,6 +37,9 @@
 	.product__title{
 		font: $product-name;
 		margin-top: 2rem;
+		word-break: break-word;
+		overflow-wrap: break-word;
+		hyphens: auto;
 	}
 
 	.product__category{

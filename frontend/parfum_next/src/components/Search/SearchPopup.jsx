@@ -1,5 +1,4 @@
 'use client';
-
 import React from "react";
 import Link from "next/link";
 import styles from "./SearchPopup.module.scss";
@@ -11,10 +10,12 @@ export default function SearchPopup({ query, results, loading, onLinkClick }) {
     const messages = useMessages("searchPopup", locale);
 
     if (!query) return null;
+    if (loading) return (
+        <div className={styles.searchPopup} onMouseDown={e => e.preventDefault()}>
+            <p>{messages.loading}</p>
+        </div>
+    );
 
-    if (loading) return <div className={styles.searchPopup}><p>{messages.loading}</p></div>;
-
-    // Собираем все результаты в один массив с типом
     const allResults = [
         ...(results.products?.map(p => ({ ...p, type: "product" })) || []),
         ...(results.categories?.map(c => ({ ...c, type: "category" })) || []),
@@ -22,17 +23,16 @@ export default function SearchPopup({ query, results, loading, onLinkClick }) {
     ];
 
     const hasResults = allResults.length > 0;
-
-    // Берем максимум 3
     const limitedResults = allResults.slice(0, 3);
 
-    // helper для добавления языка в ссылку
     const withLocale = (path) => `/${locale}${path}`;
 
     return (
-        <div className={styles.searchPopup}>
+        <div
+            className={styles.searchPopup}
+            onMouseDown={e => e.preventDefault()} // не даём попапу уводить фокус с инпута
+        >
             {!hasResults && <p>{messages.notFound}</p>}
-
             {hasResults && (
                 <ul className={styles.searchPopup__list}>
                     {limitedResults.map((item) => {
@@ -76,7 +76,6 @@ export default function SearchPopup({ query, results, loading, onLinkClick }) {
                     })}
                 </ul>
             )}
-
             {hasResults && (
                 <Link
                     href={withLocale(`/search?q=${encodeURIComponent(query)}`)}

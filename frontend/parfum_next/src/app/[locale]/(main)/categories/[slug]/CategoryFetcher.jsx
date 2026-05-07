@@ -6,13 +6,14 @@ import ProductFilters from "@/components/ProductFilters/ProductFilters";
 import Breadcrumbs from "@/components/Breadcrumbs/Breadcrumbs";
 import { useLocale } from "@/context/LocaleContext";
 
-export default function CategoryFetcher({ slug }) {
+export default  function CategoryFetcher({ slug }) {
 	const { locale } = useLocale(); // текущий язык 'ru' или 'tk'
 	const [category, setCategory] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [filters, setFilters] = useState({});
 
 	useEffect(() => {
+		
 		if (!slug) return;
 
 		async function fetchCategory() {

@@ -1,6 +1,6 @@
-const BASE_URL = "http://127.0.0.1:8000/api/v1";
+// const BASE_URL = "http://127.0.0.1:8000/api/v1";
 
-// const BASE_URL = "https://parfum.com.tm/api/v1";
+const BASE_URL = "https://parfum.com.tm/api/v1";
 
 /**
  * Универсальный запрос к API
@@ -22,6 +22,7 @@ export async function apiFetch(endpoint, options = {}) {
 		return data.results || data; // results — для пагинации
 	} catch (error) {
 		console.error(`Ошибка при запросе ${endpoint}:`, error);
-		return [];
+		// return [];
+		throw error;
 	}
 }
